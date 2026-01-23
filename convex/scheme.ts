@@ -3,22 +3,22 @@ import { v } from "convex/values";
 
 export default defineSchema({
   users: defineTable({
-    email: v.optional(v.string()),
-    phone: v.optional(v.string()), // For SMS notifications
     firstName: v.string(),
     lastName: v.string(),
+    phone: v.optional(v.string()), // Unverified, just for SMS notifications
     role: v.union(
       v.literal("service_provider"),
       v.literal("volunteer"), 
       v.literal("service_user")
     ),
-    location: v.string(), // "Kams Laundromat" or "Star Laundry Love"
+    location: v.string(),
     language: v.string(), // "en", "es", "pt", "ht"
     createdAt: v.number(),
   })
   .index("by_phone", ["phone"])
   .index("by_role_location", ["role", "location"]),
 
+  // ... rest of your schema stays the same
   intakeForms: defineTable({
     serviceUserId: v.id("users"),
     firstName: v.string(),
@@ -26,11 +26,11 @@ export default defineSchema({
     livingCondition: v.union(
       v.literal("homeless"),
       v.literal("sheltered"),
-      v.literal("loads") // From your design
+      v.literal("loads")
     ),
-    estimatedLaundryLoads: v.number(), // e.g. 2.3 loads
-    estimatedLaundryWeightLbs: v.number(), // e.g. 9.15 lbs
-    sessionId: v.optional(v.id("sessions")),
+    estimatedLaundryLoads: v.number(),
+    estimatedLaundryWeightLbs: v.number(),
+    sessionId: v.id("sessions"),
     submittedAt: v.number(),
   })
   .index("by_user", ["serviceUserId"]),
@@ -39,11 +39,12 @@ export default defineSchema({
     serviceProviderId: v.id("users"),
     location: v.string(),
     isActive: v.boolean(),
+    accessCode: v.string(), // 6-digit code for volunteers to join
     startedAt: v.number(),
     endedAt: v.optional(v.number()),
-    qrCode: v.optional(v.string()), // Volunteer QR for onboarding
   })
-  .index("by_location_active", ["location", "isActive"]),
+  .index("by_location_active", ["location", "isActive"])
+  .index("by_access_code", ["accessCode"]),
 
   queue: defineTable({
     serviceUserId: v.id("users"),
@@ -58,9 +59,9 @@ export default defineSchema({
       v.literal("removed")
     ),
     joinedAt: v.number(),
-    timerStartedAt: v.optional(v.number()), // 23min wash timer start
-    timerDuration: v.number(), // Default 23 minutes * 60 * 1000 ms
-    volunteerAssignedId: v.optional(v.id("users")), // Who started their timer
+    timerStartedAt: v.optional(v.number()),
+    timerDuration: v.number(),
+    volunteerAssignedId: v.optional(v.id("users")),
   })
   .index("by_session_status", ["sessionId", "status"])
   .index("by_position", ["sessionId", "position"]),
@@ -68,8 +69,9 @@ export default defineSchema({
   volunteers: defineTable({
     userId: v.id("users"),
     sessionId: v.id("sessions"),
+    qrCode: v.string(), // UUID for tracking who onboarded each user
     assignedAt: v.number(),
-    qrCode: v.string(), // Unique QR for this volunteer/session
   })
-  .index("by_session", ["sessionId"]),
+  .index("by_session", ["sessionId"])
+  .index("by_qr_code", ["qrCode"]),
 });
