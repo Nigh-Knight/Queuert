@@ -8,13 +8,23 @@
  * @module
  */
 
+import type * as intake from "../intake.js";
+import type * as queue from "../queue.js";
+import type * as scheme from "../scheme.js";
+import type * as sessions from "../sessions.js";
+
 import type {
   ApiFromModules,
   FilterApi,
   FunctionReference,
 } from "convex/server";
 
-declare const fullApi: ApiFromModules<{}>;
+declare const fullApi: ApiFromModules<{
+  intake: typeof intake;
+  queue: typeof queue;
+  scheme: typeof scheme;
+  sessions: typeof sessions;
+}>;
 
 /**
  * A utility for referencing Convex functions in your app's public API.
