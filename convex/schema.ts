@@ -70,7 +70,7 @@ export default defineSchema({
   .index("by_position", ["sessionId", "position"]),
 
   volunteers: defineTable({
-    userId: v.id("users"),
+    userId: v.optional(v.id("users")), // Set when volunteer scans QR and registers
     sessionId: v.id("sessions"),
     qrCode: v.string(), // UUID for tracking who onboarded each user
     assignedAt: v.number(),
