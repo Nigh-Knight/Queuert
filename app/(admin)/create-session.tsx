@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { View, StyleSheet, Alert, Text } from 'react-native';
+import { View, StyleSheet, Alert, Text, ScrollView } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
 import { useMutation } from 'convex/react';
@@ -11,12 +12,13 @@ import { DropdownSelect } from '@/components/provider/atoms/DropdownSelect';
 import { InputField } from '@/components/provider/atoms/InputField';
 
 const LOCATIONS = [
-  { label: "Kam's Laundromat", value: 'kams' },
-  { label: "Star Laundromat", value: 'star' },
+  { label: "📍 Kam's Laundromat", value: 'kams' },
+  { label: "📍 Star Laundromat", value: 'star' },
 ];
 
 export default function CreateSession() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const createSession = useMutation(api.sessions.createSession);
 
   const [location, setLocation] = useState<string | number>('');
@@ -104,93 +106,106 @@ export default function CreateSession() {
   };
 
   return (
-    <View style={styles.container}>
-      <Header title="Create Session" onBackPress={() => router.back()} />
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <Header title="✨ Create Session" />
 
-      {error && (
-        <View style={styles.errorBanner}>
-          <Text style={styles.errorText}>{error}</Text>
-        </View>
-      )}
-
-      <View style={styles.form}>
-        <DropdownSelect
-          label="Location"
-          options={LOCATIONS}
-          selectedValue={location}
-          onChange={setLocation}
-          placeholder="Select laundromat"
-        />
-
-        <View style={styles.dateTimeRow}>
-          <View style={styles.dateButton}>
-            <Text style={styles.label}>Date</Text>
-            <CustomButton
-              label={date.toLocaleDateString()}
-              onPress={() => setShowDatePicker(true)}
-              variant="secondary"
-            />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        {error && (
+          <View style={styles.errorBanner}>
+            <Text style={styles.errorText}>⚠️ {error}</Text>
           </View>
-
-          <View style={styles.timeButton}>
-            <Text style={styles.label}>Time</Text>
-            <CustomButton
-              label={date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              onPress={() => setShowTimePicker(true)}
-              variant="secondary"
-            />
-          </View>
-        </View>
-
-        {showDatePicker && (
-          <DateTimePicker
-            value={date}
-            mode="date"
-            onChange={handleDateChange}
-            minimumDate={new Date()}
-          />
         )}
 
-        {showTimePicker && (
-          <DateTimePicker
-            value={date}
-            mode="time"
-            onChange={handleTimeChange}
+        <View style={styles.form}>
+          <DropdownSelect
+            label="📍 Location"
+            options={LOCATIONS}
+            selectedValue={location}
+            onChange={setLocation}
+            placeholder="Select laundromat"
           />
-        )}
 
-        <InputField
-          label="Number of Volunteer QR Codes"
-          value={volunteerCount}
-          onChangeText={setVolunteerCount}
-          keyboardType="numeric"
-          placeholder="5"
-        />
+          <View style={styles.dateTimeRow}>
+            <View style={styles.dateButton}>
+              <Text style={styles.label}>📅 Date</Text>
+              <CustomButton
+                label={date.toLocaleDateString()}
+                onPress={() => setShowDatePicker(true)}
+                variant="secondary"
+              />
+            </View>
 
+            <View style={styles.timeButton}>
+              <Text style={styles.label}>🕐 Time</Text>
+              <CustomButton
+                label={date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                onPress={() => setShowTimePicker(true)}
+                variant="secondary"
+              />
+            </View>
+          </View>
+
+          {showDatePicker && (
+            <DateTimePicker
+              value={date}
+              mode="date"
+              onChange={handleDateChange}
+              minimumDate={new Date()}
+            />
+          )}
+
+          {showTimePicker && (
+            <DateTimePicker
+              value={date}
+              mode="time"
+              onChange={handleTimeChange}
+            />
+          )}
+
+          <InputField
+            label="👥 Number of Volunteer QR Codes"
+            value={volunteerCount}
+            onChangeText={setVolunteerCount}
+            keyboardType="numeric"
+            placeholder="5"
+          />
+        </View>
+      </ScrollView>
+
+      <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, Spacing.lg) }]}>
         <CustomButton
-          label="Create Session"
+          label="✅ Create Session"
           onPress={handleSubmit}
           variant="primary"
           isLoading={isLoading}
           disabled={isLoading}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
+  scrollContent: { flexGrow: 1 },
   form: { padding: Spacing.lg, gap: Spacing.md },
   errorBanner: {
     backgroundColor: Colors.alert,
     padding: Spacing.sm,
     marginHorizontal: Spacing.md,
+    marginTop: Spacing.md,
     borderRadius: 4,
   },
-  errorText: { color: 'white', textAlign: 'center' },
+  errorText: { color: 'white', textAlign: 'center', fontWeight: '600' },
   dateTimeRow: { flexDirection: 'row', gap: Spacing.md },
   dateButton: { flex: 1 },
   timeButton: { flex: 1 },
-  label: { ...Typography.caption, marginBottom: Spacing.xs },
+  label: { ...Typography.caption, marginBottom: Spacing.xs, fontWeight: '600' },
+  footer: {
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
+    backgroundColor: Colors.background,
+  },
 });

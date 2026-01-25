@@ -17,7 +17,7 @@ export default function AdminHome() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Header title="Admin Dashboard" />
+      <Header title="👨‍💼 Admin Dashboard" />
 
       {/* Session status cards will go here */}
       <View style={styles.content}>

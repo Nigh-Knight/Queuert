@@ -72,10 +72,10 @@ export default function SessionQRCodes() {
   return (
     <View style={styles.container}>
       <Header
-        title="Volunteer QR Codes"
+        title="📱 Volunteer QR Codes"
         rightAction={
           <CustomButton
-            label="Done"
+            label="✅ Done"
             onPress={handleDone}
             variant="secondary"
           />

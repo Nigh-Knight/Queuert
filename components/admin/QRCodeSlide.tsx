@@ -20,7 +20,7 @@ export function QRCodeSlide({ sessionId, qrCode, index, total }: QRCodeSlideProp
   return (
     <View style={styles.container}>
       <Text style={styles.counter}>
-        Volunteer {index + 1} of {total}
+        🤝 Volunteer {index + 1} of {total}
       </Text>
 
       <View style={styles.qrContainer}>
@@ -33,11 +33,11 @@ export function QRCodeSlide({ sessionId, qrCode, index, total }: QRCodeSlideProp
       </View>
 
       <Text style={styles.instruction}>
-        Have volunteer scan this code to join
+        📸 Have volunteer scan this code to join
       </Text>
 
       <Text style={styles.swipeHint}>
-        Swipe left for next volunteer
+        👈 Swipe left for next volunteer
       </Text>
     </View>
   );
