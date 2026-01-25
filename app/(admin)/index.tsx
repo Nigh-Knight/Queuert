@@ -1,7 +1,6 @@
-import { useRef, useCallback, useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { useRef, useCallback, useState, useEffect } from 'react';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { FAB } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -10,35 +9,56 @@ import { Header } from '@/components/provider/atoms/Header';
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { CreateSessionBottomSheet } from '@/components/admin/CreateSessionBottomSheet';
+import { AdminVerificationBottomSheet } from '@/components/admin/AdminVerificationBottomSheet';
 
 export default function AdminHome() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const createSessionSheetRef = useRef<BottomSheet>(null);
+  const verificationSheetRef = useRef<BottomSheet>(null);
+  const [isCreateSessionOpen, setIsCreateSessionOpen] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
 
-  // Query active sessions for both locations
-  const kamsSession = useQuery(api.sessions.getActiveSession, { location: 'kams' });
-  const starSession = useQuery(api.sessions.getActiveSession, { location: 'star' });
+  // Query active sessions for both locations (only if verified)
+  const kamsSession = useQuery(
+    isVerified ? api.sessions.getActiveSession : undefined,
+    isVerified ? { location: 'kams' } : 'skip'
+  );
+  const starSession = useQuery(
+    isVerified ? api.sessions.getActiveSession : undefined,
+    isVerified ? { location: 'star' } : 'skip'
+  );
 
-  const handleOpenSheet = useCallback(() => {
-    setIsSheetOpen(true);
-    bottomSheetRef.current?.expand();
+  // Show verification on mount if not verified
+  useEffect(() => {
+    if (!isVerified) {
+      verificationSheetRef.current?.expand();
+    }
+  }, [isVerified]);
+
+  const handleVerified = useCallback(() => {
+    setIsVerified(true);
+    verificationSheetRef.current?.close();
   }, []);
 
-  const handleCloseSheet = useCallback(() => {
-    setIsSheetOpen(false);
-    bottomSheetRef.current?.close();
+  const handleOpenCreateSession = useCallback(() => {
+    setIsCreateSessionOpen(true);
+    createSessionSheetRef.current?.expand();
+  }, []);
+
+  const handleCloseCreateSession = useCallback(() => {
+    setIsCreateSessionOpen(false);
+    createSessionSheetRef.current?.close();
   }, []);
 
   const handleSessionCreated = useCallback((sessionId: string) => {
-    handleCloseSheet();
+    handleCloseCreateSession();
     // Navigate to QR codes screen
     router.push({
       pathname: '/(admin)/session-qr-codes',
       params: { sessionId },
     });
-  }, [router, handleCloseSheet]);
+  }, [router, handleCloseCreateSession]);
 
   const renderBackdrop = useCallback(
     (props: any) => (
@@ -63,24 +83,46 @@ export default function AdminHome() {
           {/* Show active session info for each location */}
         </View>
 
-        <FAB
-          icon="plus"
-          style={[styles.fab, { bottom: Math.max(insets.bottom, 20) + 16 + Spacing.lg }]}
-          onPress={handleOpenSheet}
-        />
+        {/* Show FAB only when verified */}
+        {isVerified && (
+          <TouchableOpacity
+            style={[styles.fab, { bottom: Math.max(insets.bottom, 20) + 16 + Spacing.lg }]}
+            onPress={handleOpenCreateSession}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.fabIcon}>+</Text>
+          </TouchableOpacity>
+        )}
 
+        {/* Admin Verification Sheet */}
         <BottomSheet
-          ref={bottomSheetRef}
+          ref={verificationSheetRef}
+          index={-1}
+          snapPoints={['50%']}
+          enablePanDownToClose={false}
+          backdropComponent={renderBackdrop}
+          handleIndicatorStyle={styles.sheetIndicator}
+          backgroundStyle={styles.sheetBackground}
+        >
+          <AdminVerificationBottomSheet
+            onVerified={handleVerified}
+            onClose={() => router.back()}
+          />
+        </BottomSheet>
+
+        {/* Create Session Sheet */}
+        <BottomSheet
+          ref={createSessionSheetRef}
           index={-1}
           snapPoints={['75%']}
           enablePanDownToClose
           backdropComponent={renderBackdrop}
           handleIndicatorStyle={styles.sheetIndicator}
           backgroundStyle={styles.sheetBackground}
-          onChange={(index) => setIsSheetOpen(index >= 0)}
+          onChange={(index) => setIsCreateSessionOpen(index >= 0)}
         >
           <CreateSessionBottomSheet
-            onClose={handleCloseSheet}
+            onClose={handleCloseCreateSession}
             onSessionCreated={handleSessionCreated}
           />
         </BottomSheet>
@@ -95,7 +137,23 @@ const styles = StyleSheet.create({
   fab: {
     position: 'absolute',
     right: Spacing.lg,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: Colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  fabIcon: {
+    fontSize: 32,
+    color: '#fff',
+    fontWeight: '300',
+    lineHeight: 32,
   },
   sheetIndicator: {
     backgroundColor: Colors.text.tertiary,
