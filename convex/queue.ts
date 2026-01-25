@@ -7,10 +7,12 @@ export const getActiveQueue = query({
   handler: async (ctx, args) => {
     const queueItems = await ctx.db
       .query("queue")
-      .filter((q) => q.eq(q.field("sessionId"), args.sessionId))
+      .withIndex("by_session_status", (q) =>
+        q.eq("sessionId", args.sessionId)
+      )
       .order("asc")
       .collect();
-    
+
     // Populate user details
     return await Promise.all(
       queueItems.map(async (item) => {
@@ -48,6 +50,9 @@ export const removeFromQueue = mutation({
 });
 
 // Get user's queue position
+// Note: Uses .filter() instead of .withIndex() because this is a per-user lookup,
+// not a session-wide scan. Adding an index for serviceUserId would only benefit
+// if we frequently query all queue entries for a specific user across sessions.
 export const getUserQueuePosition = query({
   args: { serviceUserId: v.id("users") },
   handler: async (ctx, args) => {

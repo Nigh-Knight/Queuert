@@ -25,7 +25,9 @@ export const submitIntakeForm = mutation({
     // Add user to queue automatically
     const queuePosition = await ctx.db
       .query("queue")
-      .filter((q) => q.eq(q.field("sessionId"), args.sessionId))
+      .withIndex("by_session_status", (q) =>
+        q.eq("sessionId", args.sessionId)
+      )
       .collect();
     
     await ctx.db.insert("queue", {
