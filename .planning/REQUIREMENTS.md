@@ -148,13 +148,70 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| *To be populated by roadmapper* | | |
+| AUTH-01 | Phase 2 | Pending |
+| AUTH-02 | Phase 2 | Pending |
+| AUTH-03 | Phase 2 | Pending |
+| AUTH-04 | Phase 2 | Pending |
+| AUTH-05 | Phase 2 | Pending |
+| SESS-01 | Phase 1 | Pending |
+| SESS-02 | Phase 1 | Pending |
+| SESS-03 | Phase 1 | Pending |
+| SESS-04 | Phase 1 | Pending |
+| SESS-05 | Phase 1 | Pending |
+| QUEUE-01 | Phase 3 | Pending |
+| QUEUE-02 | Phase 3 | Pending |
+| QUEUE-03 | Phase 3 | Pending |
+| QUEUE-04 | Phase 3 | Pending |
+| QUEUE-05 | Phase 3 | Pending |
+| QUEUE-06 | Phase 3 | Pending |
+| QUEUE-07 | Phase 3 | Pending |
+| QUEUE-08 | Phase 3 | Pending |
+| QUEUE-09 | Phase 3 | Pending |
+| TIMER-01 | Phase 4 | Pending |
+| TIMER-02 | Phase 4 | Pending |
+| TIMER-03 | Phase 4 | Pending |
+| TIMER-04 | Phase 4 | Pending |
+| TIMER-05 | Phase 4 | Pending |
+| TIMER-06 | Phase 4 | Pending |
+| TIMER-07 | Phase 4 | Pending |
+| USER-01 | Phase 5 | Pending |
+| USER-02 | Phase 5 | Pending |
+| USER-03 | Phase 5 | Pending |
+| USER-04 | Phase 5 | Pending |
+| USER-05 | Phase 5 | Pending |
+| VOL-01 | Phase 6 | Pending |
+| VOL-02 | Phase 6 | Pending |
+| VOL-03 | Phase 6 | Pending |
+| VOL-04 | Phase 6 | Pending |
+| VOL-05 | Phase 6 | Pending |
+| ADMIN-01 | Phase 7 | Pending |
+| ADMIN-02 | Phase 7 | Pending |
+| ADMIN-03 | Phase 7 | Pending |
+| ADMIN-04 | Phase 7 | Pending |
+| NOTIF-01 | Phase 9 | Pending |
+| NOTIF-02 | Phase 9 | Pending |
+| NOTIF-03 | Phase 9 | Pending |
+| NOTIF-04 | Phase 9 | Pending |
+| DATA-01 | Phase 10 | Pending |
+| DATA-02 | Phase 10 | Pending |
+| DATA-03 | Phase 10 | Pending |
+| DATA-04 | Phase 10 | Pending |
+| DATA-05 | Phase 10 | Pending |
+| LANG-01 | Phase 8 | Pending |
+| LANG-02 | Phase 8 | Pending |
+| LANG-03 | Phase 8 | Pending |
+| LANG-04 | Phase 8 | Pending |
+| OFFLINE-01 | Phase 6 | Pending |
+| OFFLINE-02 | Phase 6 | Pending |
+| OFFLINE-03 | Phase 6 | Pending |
+| OFFLINE-04 | Phase 6 | Pending |
+| OFFLINE-05 | Phase 6 | Pending |
 
 **Coverage:**
 - v1 requirements: 55 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 55 ⚠️
+- Mapped to phases: 55 (100% coverage)
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-23*
-*Last updated: 2026-01-23 after initial definition*
+*Last updated: 2026-01-23 after roadmap creation*
