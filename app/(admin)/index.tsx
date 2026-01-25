@@ -63,9 +63,6 @@ export default function AdminHome() {
           {/* Show active session info for each location */}
         </View>
 
-        {/* Black bar at bottom for navigation visibility */}
-        <View style={[styles.navigationBar, { height: Math.max(insets.bottom, 20) }]} />
-
         <FAB
           icon="plus"
           style={[styles.fab, { bottom: Math.max(insets.bottom, Spacing.lg) + 8 }]}
@@ -95,13 +92,6 @@ export default function AdminHome() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   content: { flex: 1, padding: Spacing.md },
-  navigationBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: '#000',
-  },
   fab: {
     position: 'absolute',
     right: Spacing.lg,

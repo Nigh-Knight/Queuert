@@ -56,7 +56,6 @@ export default function SessionQRCodes() {
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={Colors.primary} />
         </View>
-        <View style={[styles.navigationBar, { height: Math.max(insets.bottom, 20) }]} />
       </SafeAreaView>
     );
   }
@@ -68,7 +67,6 @@ export default function SessionQRCodes() {
           <ActivityIndicator size="large" color={Colors.primary} />
           <Text style={styles.loadingText}>Generating volunteer codes...</Text>
         </View>
-        <View style={[styles.navigationBar, { height: Math.max(insets.bottom, 20) }]} />
       </SafeAreaView>
     );
   }
@@ -118,9 +116,6 @@ export default function SessionQRCodes() {
           />
         ))}
       </View>
-
-      {/* Black navigation bar */}
-      <View style={[styles.navigationBar, { height: Math.max(insets.bottom, 20) }]} />
     </SafeAreaView>
   );
 }
@@ -159,12 +154,5 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-  },
-  navigationBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: '#000',
   },
 });

@@ -62,8 +62,10 @@ export default function CreateSession() {
       return;
     }
 
-    if (date.getTime() < Date.now()) {
-      setError('Session date must be in the future');
+    // Allow current time and future times (no past dates)
+    const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+    if (date.getTime() < fiveMinutesAgo) {
+      setError('Session date cannot be in the past');
       return;
     }
 

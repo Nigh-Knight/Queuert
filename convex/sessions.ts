@@ -9,9 +9,12 @@ export const createSession = mutation({
     volunteerCount: v.number(),
   },
   handler: async (ctx, args) => {
-    // Validate scheduledDate is in the future
-    if (args.scheduledDate < Date.now()) {
-      throw new Error("Session date must be in the future");
+    // Validate scheduledDate is not in the past (allow current time for immediate sessions)
+    const now = Date.now();
+    const fiveMinutesAgo = now - (5 * 60 * 1000); // Allow 5 minute grace period for clock differences
+
+    if (args.scheduledDate < fiveMinutesAgo) {
+      throw new Error("Session date cannot be in the past");
     }
 
     // Generate 6-digit access code with collision check
@@ -46,7 +49,7 @@ export const createSession = mutation({
       startedAt: Date.now(),
       scheduledDate: args.scheduledDate,
       volunteerCount: args.volunteerCount,
-      serviceProviderId: "placeholder" as any, // TODO: Replace with actual auth in Phase 2
+      // serviceProviderId will be set in Phase 2 when auth is implemented
     });
 
     return {

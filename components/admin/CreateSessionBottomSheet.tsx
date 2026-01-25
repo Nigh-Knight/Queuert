@@ -63,8 +63,10 @@ export function CreateSessionBottomSheet({ onClose, onSessionCreated }: CreateSe
       return;
     }
 
-    if (date.getTime() < Date.now()) {
-      setError('Session date must be in the future');
+    // Allow current time and future times (no past dates)
+    const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+    if (date.getTime() < fiveMinutesAgo) {
+      setError('Session date cannot be in the past');
       return;
     }
 
@@ -176,7 +178,7 @@ export function CreateSessionBottomSheet({ onClose, onSessionCreated }: CreateSe
               variant="secondary"
             />
             <CustomButton
-              label="✅ Create"
+              label="Create"
               onPress={handleSubmit}
               variant="primary"
               isLoading={isLoading}

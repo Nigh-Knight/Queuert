@@ -37,7 +37,7 @@ export default defineSchema({
   .index("by_session", ["sessionId"]),
 
   sessions: defineTable({
-    serviceProviderId: v.id("users"),
+    serviceProviderId: v.optional(v.id("users")), // Optional until Phase 2 auth is implemented
     location: v.string(),
     isActive: v.boolean(),
     accessCode: v.string(), // 6-digit code for volunteers to join
