@@ -4,35 +4,70 @@ import { v } from "convex/values";
 // Create new session
 export const createSession = mutation({
   args: {
-    serviceProviderId: v.id("users"),
     location: v.string(),
     scheduledDate: v.number(),
     volunteerCount: v.number(),
   },
   handler: async (ctx, args) => {
-    // Generate 6-digit access code
-    const accessCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-    // Check for collision (unlikely but possible)
-    const existing = await ctx.db
-      .query("sessions")
-      .withIndex("by_access_code", (q) => q.eq("accessCode", accessCode))
-      .first();
-
-    if (existing) {
-      // Retry with new code
-      throw new Error("Access code collision, please retry");
+    // Validate scheduledDate is in the future
+    if (args.scheduledDate < Date.now()) {
+      throw new Error("Session date must be in the future");
     }
 
-    return await ctx.db.insert("sessions", {
-      serviceProviderId: args.serviceProviderId,
+    // Generate 6-digit access code with collision check
+    let accessCode: string;
+    let attempts = 0;
+    do {
+      accessCode = Math.floor(100000 + Math.random() * 900000).toString();
+      const existing = await ctx.db
+        .query("sessions")
+        .withIndex("by_access_code", (q) => q.eq("accessCode", accessCode))
+        .first();
+      if (!existing) break;
+      attempts++;
+    } while (attempts < 10);
+
+    if (attempts >= 10) {
+      throw new Error("Failed to generate unique access code");
+    }
+
+    // Check for overlapping active sessions
+    const existingActive = await ctx.db
+      .query("sessions")
+      .withIndex("by_location_active", (q) =>
+        q.eq("location", args.location).eq("isActive", true)
+      )
+      .first();
+
+    const sessionId = await ctx.db.insert("sessions", {
       location: args.location,
       isActive: true,
       accessCode,
       startedAt: Date.now(),
       scheduledDate: args.scheduledDate,
       volunteerCount: args.volunteerCount,
+      serviceProviderId: "placeholder" as any, // TODO: Replace with actual auth in Phase 2
     });
+
+    return {
+      sessionId,
+      accessCode,
+      hasOverlappingSession: !!existingActive,
+    };
+  },
+});
+
+// End an active session
+export const endSession = mutation({
+  args: {
+    sessionId: v.id("sessions"),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.sessionId, {
+      isActive: false,
+      endedAt: Date.now(),
+    });
+    return true;
   },
 });
 
@@ -46,5 +81,13 @@ export const getActiveSession = query({
         q.eq("location", args.location).eq("isActive", true)
       )
       .first();
+  },
+});
+
+// Get session by ID
+export const getSessionById = query({
+  args: { sessionId: v.id("sessions") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.sessionId);
   },
 });
