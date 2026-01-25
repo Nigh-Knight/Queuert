@@ -10,8 +10,8 @@
 
 import type * as intake from "../intake.js";
 import type * as queue from "../queue.js";
-import type * as scheme from "../scheme.js";
 import type * as sessions from "../sessions.js";
+import type * as volunteers from "../volunteers.js";
 
 import type {
   ApiFromModules,
@@ -22,8 +22,8 @@ import type {
 declare const fullApi: ApiFromModules<{
   intake: typeof intake;
   queue: typeof queue;
-  scheme: typeof scheme;
   sessions: typeof sessions;
+  volunteers: typeof volunteers;
 }>;
 
 /**

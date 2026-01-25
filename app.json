@@ -44,6 +44,9 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "convexUrl": "https://cheerful-greyhound-927.convex.cloud"
     }
   }
 }

@@ -75,6 +75,9 @@ export function RoleSelectionScreen({ onRoleSelect }: RoleSelectionScreenProps) 
         </View>
       </ScrollView>
 
+      {/* Black navigation bar for visibility */}
+      <View style={[styles.navigationBar, { height: Math.max(insets.bottom, 20) }]} />
+
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, Spacing.lg) }]}>
         <CustomButton
           label="Continue"
@@ -110,5 +113,13 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.lg,
     borderTopWidth: 1,
     borderTopColor: Colors.border,
+    backgroundColor: Colors.background,
+  },
+  navigationBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#000',
   },
 });

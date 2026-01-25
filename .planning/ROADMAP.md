@@ -39,11 +39,14 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. Admin can generate volunteer QR codes for an active session
   5. Real-time updates propagate across all connected devices within 2 seconds
 
-**Plans**: TBD
+**Plans**: 5 plans in 3 waves
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md - ConvexProvider setup and dependencies
+- [ ] 01-02-PLAN.md - Schema updates and index migrations
+- [ ] 01-03-PLAN.md - Session management backend
+- [ ] 01-04-PLAN.md - Admin session creation UI
+- [ ] 01-05-PLAN.md - QR code generation and display
 
 ### Phase 2: Authentication & Role Access
 **Goal**: Users can access the app according to their role (admin with verification code, volunteer via QR scan, service user with phone/name only), and the system differentiates permissions.
@@ -227,7 +230,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Real-Time Infrastructure & Session Management | 0/TBD | Not started | - |
+| 1. Real-Time Infrastructure & Session Management | 0/5 | Planned | - |
 | 2. Authentication & Role Access | 0/TBD | Not started | - |
 | 3. Queue Operations & Management | 0/TBD | Not started | - |
 | 4. Timer System | 0/TBD | Not started | - |
@@ -240,4 +243,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 ---
 *Roadmap created: 2026-01-23*
-*Last updated: 2026-01-23*
+*Last updated: 2026-01-25*

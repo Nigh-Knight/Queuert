@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, Dimensions, Text, ActivityIndicator } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -13,6 +14,7 @@ const { width } = Dimensions.get('window');
 
 export default function SessionQRCodes() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { sessionId } = useLocalSearchParams<{ sessionId: string }>();
   const typedSessionId = sessionId as Id<'sessions'>;
 
@@ -50,27 +52,29 @@ export default function SessionQRCodes() {
 
   if (!session || volunteers === undefined) {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top']}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={Colors.primary} />
         </View>
-      </View>
+        <View style={[styles.navigationBar, { height: Math.max(insets.bottom, 20) }]} />
+      </SafeAreaView>
     );
   }
 
   if (isGenerating || volunteers.length === 0) {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top']}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={Colors.primary} />
           <Text style={styles.loadingText}>Generating volunteer codes...</Text>
         </View>
-      </View>
+        <View style={[styles.navigationBar, { height: Math.max(insets.bottom, 20) }]} />
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <Header
         title="📱 Volunteer QR Codes"
         rightAction={
@@ -103,7 +107,7 @@ export default function SessionQRCodes() {
       />
 
       {/* Pagination dots */}
-      <View style={styles.pagination}>
+      <View style={[styles.pagination, { paddingBottom: Math.max(insets.bottom, Spacing.lg) }]}>
         {volunteers.map((_, index) => (
           <View
             key={index}
@@ -114,7 +118,10 @@ export default function SessionQRCodes() {
           />
         ))}
       </View>
-    </View>
+
+      {/* Black navigation bar */}
+      <View style={[styles.navigationBar, { height: Math.max(insets.bottom, 20) }]} />
+    </SafeAreaView>
   );
 }
 
@@ -138,7 +145,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: Spacing.lg,
+    paddingTop: Spacing.lg,
     gap: Spacing.sm,
   },
   dot: {
@@ -152,5 +159,12 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
+  },
+  navigationBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#000',
   },
 });

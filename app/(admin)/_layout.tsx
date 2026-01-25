@@ -8,7 +8,6 @@ export default function AdminLayout() {
       }}
     >
       <Stack.Screen name="index" />
-      <Stack.Screen name="create-session" />
       <Stack.Screen name="session-qr-codes" />
     </Stack>
   );
