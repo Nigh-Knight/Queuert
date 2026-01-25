@@ -1,4 +1,5 @@
 import { View, StyleSheet } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FAB } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { useQuery } from 'convex/react';
@@ -8,13 +9,14 @@ import { Header } from '@/components/provider/atoms/Header';
 
 export default function AdminHome() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   // Query active sessions for both locations
   const kamsSession = useQuery(api.sessions.getActiveSession, { location: 'kams' });
   const starSession = useQuery(api.sessions.getActiveSession, { location: 'star' });
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <Header title="Admin Dashboard" />
 
       {/* Session status cards will go here */}
@@ -24,10 +26,10 @@ export default function AdminHome() {
 
       <FAB
         icon="plus"
-        style={styles.fab}
+        style={[styles.fab, { bottom: Math.max(insets.bottom, Spacing.lg) }]}
         onPress={() => router.push('/(admin)/create-session')}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

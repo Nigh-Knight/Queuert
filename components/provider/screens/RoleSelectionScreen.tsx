@@ -3,9 +3,11 @@ import {
   View,
   Text,
   ScrollView,
-  SafeAreaView,
   StyleSheet,
+  Platform,
+  StatusBar,
 } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Typography, Spacing } from '@/constants/theme';
 import { Header } from '../atoms/Header';
 import { RoleCard } from '../atoms/RoleCard';
@@ -38,6 +40,7 @@ const ROLE_OPTIONS = [
 
 export function RoleSelectionScreen({ onRoleSelect }: RoleSelectionScreenProps) {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const insets = useSafeAreaInsets();
 
   const handleContinue = () => {
     if (selectedRole) {
@@ -48,7 +51,7 @@ export function RoleSelectionScreen({ onRoleSelect }: RoleSelectionScreenProps) 
   const isContinueDisabled = !selectedRole;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <Header title="Select Your Role" />
       <ScrollView
         contentContainerStyle={styles.content}
@@ -72,7 +75,7 @@ export function RoleSelectionScreen({ onRoleSelect }: RoleSelectionScreenProps) 
         </View>
       </ScrollView>
 
-      <View style={styles.footer}>
+      <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, Spacing.lg) }]}>
         <CustomButton
           label="Continue"
           onPress={handleContinue}
