@@ -33,7 +33,8 @@ export default defineSchema({
     sessionId: v.id("sessions"),
     submittedAt: v.number(),
   })
-  .index("by_user", ["serviceUserId"]),
+  .index("by_user", ["serviceUserId"])
+  .index("by_session", ["sessionId"]),
 
   sessions: defineTable({
     serviceProviderId: v.id("users"),
@@ -42,6 +43,8 @@ export default defineSchema({
     accessCode: v.string(), // 6-digit code for volunteers to join
     startedAt: v.number(),
     endedAt: v.optional(v.number()),
+    scheduledDate: v.number(), // Timestamp for when session is scheduled
+    volunteerCount: v.number(), // Number of volunteer QR codes to generate
   })
   .index("by_location_active", ["location", "isActive"])
   .index("by_access_code", ["accessCode"]),
