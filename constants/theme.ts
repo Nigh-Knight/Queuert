@@ -18,6 +18,7 @@ export const Colors = {
   text: {
     primary: '#171A1F',
     secondary: '#565D6D',
+    tertiary: '#9095A1',
     disabled: '#9095A1',
   },
   // Legacy color support
