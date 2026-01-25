@@ -75,7 +75,10 @@ export function RoleSelectionScreen({ onRoleSelect }: RoleSelectionScreenProps) 
         </View>
       </ScrollView>
 
-      <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, Spacing.lg) }]}>
+      <View style={[styles.footer, {
+        paddingBottom: Math.max(insets.bottom, Spacing.lg) + Spacing.md,
+        marginBottom: Spacing.lg,
+      }]}>
         <CustomButton
           label="Continue"
           onPress={handleContinue}
