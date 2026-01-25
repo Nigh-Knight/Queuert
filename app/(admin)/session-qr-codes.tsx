@@ -105,7 +105,9 @@ export default function SessionQRCodes() {
       />
 
       {/* Pagination dots */}
-      <View style={[styles.pagination, { paddingBottom: Math.max(insets.bottom, Spacing.lg) }]}>
+      <View style={[styles.pagination, {
+        paddingBottom: Math.max(insets.bottom, 20) + 16 + Spacing.lg, // Account for nav bar height + top padding
+      }]}>
         {volunteers.map((_, index) => (
           <View
             key={index}

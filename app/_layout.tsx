@@ -28,14 +28,21 @@ export const unstable_settings = {
 function NavigationBarWrapper({ children }: { children: React.ReactNode }) {
   const insets = useSafeAreaInsets();
 
+  // Add extra padding above navigation bar to push content up
+  const navigationBarHeight = Math.max(insets.bottom, 20);
+  const topPadding = 16; // Spacing.md equivalent for consistent gap
+
   return (
     <View style={{ flex: 1 }}>
       {children}
-      {/* Global black navigation bar for all screens */}
+      {/* Global black navigation bar with top padding for content spacing */}
       <View
         style={[
           styles.globalNavigationBar,
-          { height: Math.max(insets.bottom, 20) }
+          {
+            height: navigationBarHeight + topPadding,
+            paddingTop: topPadding,
+          }
         ]}
       />
     </View>
@@ -76,5 +83,7 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: '#000',
     zIndex: 9999, // Ensure it's always on top
+    // Note: height includes topPadding to create breathing room for all bottom elements
+    // This prevents FABs, buttons, and pagination dots from getting too close to nav buttons
   },
 });

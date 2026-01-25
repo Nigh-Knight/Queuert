@@ -65,7 +65,7 @@ export default function AdminHome() {
 
         <FAB
           icon="plus"
-          style={[styles.fab, { bottom: Math.max(insets.bottom, Spacing.lg) + 8 }]}
+          style={[styles.fab, { bottom: Math.max(insets.bottom, 20) + 16 + Spacing.lg }]}
           onPress={handleOpenSheet}
         />
 
