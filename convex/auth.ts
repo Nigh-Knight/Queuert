@@ -88,6 +88,47 @@ export const checkPhoneDuplicate = query({
 });
 
 /**
+ * Validate session QR code and return session info
+ * Used by service users to join a session
+ */
+export const validateSessionQR = mutation({
+  args: {
+    qrCode: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // QR format for sessions: "session:{sessionId}"
+    if (!args.qrCode.startsWith("session:")) {
+      throw new Error("Invalid session QR code");
+    }
+
+    const sessionIdStr = args.qrCode.replace("session:", "");
+
+    // Get session using by_access_code index to validate format
+    // Note: This is a fallback - normally sessionId is directly embedded
+    const session = await ctx.db.get(sessionIdStr as any);
+
+    if (!session || session === null) {
+      throw new Error("Session not found");
+    }
+
+    // Type guard to ensure we have a session document
+    if (!('isActive' in session)) {
+      throw new Error("Invalid session document");
+    }
+
+    if (!session.isActive) {
+      throw new Error("This session has ended");
+    }
+
+    return {
+      sessionId: session._id,
+      location: session.location,
+      date: session.scheduledDate,
+    };
+  },
+});
+
+/**
  * Register a new service user
  */
 export const registerServiceUser = mutation({
