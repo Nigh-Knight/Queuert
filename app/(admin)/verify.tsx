@@ -94,7 +94,6 @@ export default function AdminVerifyScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.topPadding} />
       <Header title="Admin Access" />
       <ScrollView
         contentContainerStyle={styles.content}
@@ -129,9 +128,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
-  },
-  topPadding: {
-    height: Spacing.lg,
   },
   content: {
     paddingHorizontal: Spacing.lg,
