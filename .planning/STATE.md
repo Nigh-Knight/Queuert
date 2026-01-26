@@ -11,29 +11,29 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 2 of 10 (Authentication & Role Access)
-Plan: 2 of 7 (completed)
-Status: In progress
-Last activity: 2026-01-26 — Completed 02-02-PLAN.md (QR Scanner Component)
+Plan: 4 of 7 (completed)
+Status: In progress - Wave 2 complete
+Last activity: 2026-01-26 — Completed 02-04-PLAN.md (Service User Authentication Flow)
 
-Progress: [██████░░░░] 60%
+Progress: [███████░░░] 70%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
+- Total plans completed: 8
 - Average duration: 2.1 min
-- Total execution time: 0.25 hours
+- Total execution time: 0.30 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 5 | 12min | 2.4min |
-| 02 | 2 | 3min | 1.5min |
+| 02 | 3 | 6min | 2.0min |
 
 **Recent Trend:**
-- Last 5 plans: 01-03 (2min), 01-04 (1min), 01-05 (2min checkpoint), 02-01 (1min), 02-02 (2min)
-- Trend: Very efficient execution (<2min avg last 5)
+- Last 5 plans: 01-04 (1min), 01-05 (2min checkpoint), 02-01 (1min), 02-02 (2min), 02-04 (3min)
+- Trend: Consistent efficient execution (1-3min range)
 
 *Updated after each plan completion*
 
@@ -59,6 +59,9 @@ Recent decisions affecting current work:
 - All Convex auth queries use indexes: Follows Phase 1 pattern for 10-100x performance improvement (02-01)
 - Use CameraView instead of deprecated alternatives: expo-barcode-scanner and old Camera component deprecated in Expo SDK 54 (02-02)
 - Prevent duplicate scans with useRef: Avoids re-render during scan, provides immediate flag update (02-02)
+- Session QR format "session:{sessionId}": Simple prefix distinguishes from volunteer QR codes, easy to parse (02-04)
+- Phone optional with skip button: Many service users don't have phones, must not block registration (02-04)
+- Route params for session data: Type-safe, survives navigation, visible for debugging (02-04)
 
 ### Pending Todos
 
@@ -77,7 +80,7 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-26 (phase execution)
-Stopped at: Completed 02-02-PLAN.md (QR Scanner Component), ready for 02-03
+Stopped at: Completed 02-04-PLAN.md (Service User Authentication Flow), ready for 02-05
 Resume file: None
 
 ---
