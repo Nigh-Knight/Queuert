@@ -11,28 +11,28 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 2 of 10 (Authentication & Role Access)
-Plan: 5 of 7 (completed)
-Status: In progress - Wave 3 execution
-Last activity: 2026-01-26 — Completed 02-05-PLAN.md (Admin Verification Flow)
+Plan: 6 of 7 (completed)
+Status: In progress - Wave 4 execution
+Last activity: 2026-01-26 — Completed 02-06-PLAN.md (Session Protection Infrastructure)
 
-Progress: [████████░░] 75%
+Progress: [████████░░] 86%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
-- Average duration: 2.1 min
-- Total execution time: 0.33 hours
+- Total plans completed: 10
+- Average duration: 2.0 min
+- Total execution time: 0.37 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 5 | 12min | 2.4min |
-| 02 | 4 | 8min | 2.0min |
+| 02 | 5 | 10min | 2.0min |
 
 **Recent Trend:**
-- Last 5 plans: 01-05 (2min checkpoint), 02-01 (1min), 02-02 (2min), 02-04 (3min), 02-05 (2min)
+- Last 5 plans: 02-01 (1min), 02-02 (2min), 02-04 (3min), 02-05 (2min), 02-06 (2min)
 - Trend: Consistent efficient execution (1-3min range)
 
 *Updated after each plan completion*
@@ -65,6 +65,10 @@ Recent decisions affecting current work:
 - Hardcoded admin verification code for MVP: Using "kepler cool" as specified in CONTEXT.md, can migrate to env var later (02-05)
 - Admin session structure: Empty sessionId/location until admin creates session, role: service_provider distinguishes from volunteers (02-05)
 - Session check on mount pattern: useEffect → load session → validate role → redirect if invalid, with loading state to prevent flash (02-05)
+- useRef for previous isActive tracking: Detects transitions without causing re-renders, enables reliable session end detection (02-06)
+- router.replace() vs router.push(): Use replace() for auto-routing (no back to loading), push() for user navigation (allow back) (02-06)
+- SessionGuard doesn't auto-route: Separation of concerns - monitors state and shows alerts, doesn't control routing logic (02-06)
+- Skip Convex query when no sessionId: Pass "skip" to prevent unnecessary API calls on fresh installs (02-06)
 
 ### Pending Todos
 
@@ -86,7 +90,7 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-26 (phase execution)
-Stopped at: Completed 02-05-PLAN.md (Admin Verification Flow), ready for 02-06
+Stopped at: Completed 02-06-PLAN.md (Session Protection Infrastructure), ready for 02-07
 Resume file: None
 
 ---
