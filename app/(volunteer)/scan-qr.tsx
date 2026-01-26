@@ -37,8 +37,20 @@ export default function VolunteerScanQR() {
     setError(null);
 
     try {
+      // Parse QR code JSON (format: { sessionId, volunteerId, type })
+      let volunteerQRCode: string;
+      try {
+        const qrData = JSON.parse(qrCode);
+        if (qrData.type !== 'volunteer_join' || !qrData.volunteerId) {
+          throw new Error('Invalid volunteer QR code format');
+        }
+        volunteerQRCode = qrData.volunteerId;
+      } catch {
+        throw new Error('QR code is not a valid volunteer code');
+      }
+
       // Validate QR code with Convex
-      const result = await validateVolunteerQR({ qrCode });
+      const result = await validateVolunteerQR({ qrCode: volunteerQRCode });
 
       // Check if user already has a session
       const existingSession = await SessionStorage.load();
