@@ -1,3 +1,14 @@
+/**
+ * Admin Verification Screen
+ *
+ * This is the ONLY admin verification point in the app.
+ * Flow:
+ * 1. User selects "Team Leader" role in provider.tsx
+ * 2. Navigates here to verify with admin code ("kepler cool")
+ * 3. Calls Convex verifyAdminCode mutation
+ * 4. On success: saves session to AsyncStorage and navigates to admin dashboard
+ * 5. Admin dashboard checks session on mount and redirects here if invalid
+ */
 import React, { useState, useRef } from 'react';
 import {
   View,
