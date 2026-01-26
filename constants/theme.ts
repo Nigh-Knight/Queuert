@@ -66,25 +66,25 @@ export const Fonts = Platform.select({
 export const Typography = {
   h1: {
     fontSize: 24,
-    fontWeight: '700',
+    fontWeight: '700' as const,
     lineHeight: 32,
   },
   h2: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '600' as const,
     lineHeight: 28,
   },
   body: {
     fontSize: 14,
-    fontWeight: '400',
+    fontWeight: '400' as const,
     lineHeight: 20,
   },
   caption: {
     fontSize: 12,
-    fontWeight: '400',
+    fontWeight: '400' as const,
     lineHeight: 16,
   },
-};
+} as const;
 
 // Spacing Scale
 export const Spacing = {

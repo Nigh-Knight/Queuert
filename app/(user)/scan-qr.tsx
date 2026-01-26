@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -123,7 +123,7 @@ export default function ScanQRScreen() {
           <View style={styles.loadingCard}>
             <ActivityIndicator size="large" color={Colors.primary} />
             <View style={styles.loadingTextContainer}>
-              <View style={styles.loadingText}>Joining queue...</View>
+              <Text style={styles.loadingText}>Joining queue...</Text>
             </View>
           </View>
         </View>
