@@ -17,11 +17,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Session Management
 
-- [ ] **SESS-01**: Admin can create session with location selection (Kam's Laundromat or Star Laundromat)
-- [ ] **SESS-02**: Admin can create session with date and time selection
-- [ ] **SESS-03**: System supports multiple concurrent sessions across different locations
-- [ ] **SESS-04**: Session isolates queue data (Location A volunteers cannot see Location B queue)
-- [ ] **SESS-05**: Admin can generate volunteer QR codes for active session
+- [x] **SESS-01**: Admin can create session with location selection (Kam's Laundromat or Star Laundromat)
+- [x] **SESS-02**: Admin can create session with date and time selection
+- [x] **SESS-03**: System supports multiple concurrent sessions across different locations
+- [x] **SESS-04**: Session isolates queue data (Location A volunteers cannot see Location B queue)
+- [x] **SESS-05**: Admin can generate volunteer QR codes for active session
 
 ### Queue Management
 
@@ -153,11 +153,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-03 | Phase 2 | Pending |
 | AUTH-04 | Phase 2 | Pending |
 | AUTH-05 | Phase 2 | Pending |
-| SESS-01 | Phase 1 | Pending |
-| SESS-02 | Phase 1 | Pending |
-| SESS-03 | Phase 1 | Pending |
-| SESS-04 | Phase 1 | Pending |
-| SESS-05 | Phase 1 | Pending |
+| SESS-01 | Phase 1 | Complete |
+| SESS-02 | Phase 1 | Complete |
+| SESS-03 | Phase 1 | Complete |
+| SESS-04 | Phase 1 | Complete |
+| SESS-05 | Phase 1 | Complete |
 | QUEUE-01 | Phase 3 | Pending |
 | QUEUE-02 | Phase 3 | Pending |
 | QUEUE-03 | Phase 3 | Pending |

@@ -12,7 +12,7 @@ This roadmap transforms Queuert from a scaffolded Expo app with UI components in
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Real-Time Infrastructure & Session Management** - Establish Convex reactive queries and session lifecycle
+- [x] **Phase 1: Real-Time Infrastructure & Session Management** - Establish Convex reactive queries and session lifecycle
 - [ ] **Phase 2: Authentication & Role Access** - Implement admin codes, volunteer QR scanning, and service user entry
 - [ ] **Phase 3: Queue Operations & Management** - Build queue viewing, addition, removal, and repositioning
 - [ ] **Phase 4: Timer System** - Server-authoritative wash cycle timers with real-time sync
@@ -42,11 +42,11 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 5 plans in 3 waves
 
 Plans:
-- [ ] 01-01-PLAN.md - ConvexProvider setup and dependencies
-- [ ] 01-02-PLAN.md - Schema updates and index migrations
-- [ ] 01-03-PLAN.md - Session management backend
-- [ ] 01-04-PLAN.md - Admin session creation UI
-- [ ] 01-05-PLAN.md - QR code generation and display
+- [x] 01-01-PLAN.md - ConvexProvider setup and dependencies
+- [x] 01-02-PLAN.md - Schema updates and index migrations
+- [x] 01-03-PLAN.md - Session management backend
+- [x] 01-04-PLAN.md - Admin session creation UI
+- [x] 01-05-PLAN.md - QR code generation and display
 
 ### Phase 2: Authentication & Role Access
 **Goal**: Users can access the app according to their role (admin with verification code, volunteer via QR scan, service user with phone/name only), and the system differentiates permissions.
@@ -230,7 +230,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Real-Time Infrastructure & Session Management | 0/5 | Planned | - |
+| 1. Real-Time Infrastructure & Session Management | 5/5 | Complete | 2026-01-26 |
 | 2. Authentication & Role Access | 0/TBD | Not started | - |
 | 3. Queue Operations & Management | 0/TBD | Not started | - |
 | 4. Timer System | 0/TBD | Not started | - |
