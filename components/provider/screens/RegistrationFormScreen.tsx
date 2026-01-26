@@ -3,9 +3,9 @@ import {
   View,
   Text,
   ScrollView,
-  SafeAreaView,
   StyleSheet,
 } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Colors, Typography, Spacing } from '@/constants/theme';
 import { Header } from '../atoms/Header';
 import { InputField } from '../atoms/InputField';
@@ -65,7 +65,8 @@ export function RegistrationFormScreen({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
       <Header title="Complete Your Profile" />
       <ScrollView
         contentContainerStyle={styles.content}
@@ -122,7 +123,7 @@ export function RegistrationFormScreen({
         </View>
       </ScrollView>
 
-      <View style={styles.footer}>
+      <View style={[styles.footer, { paddingBottom: Spacing.xl + 30 }]}>
         <CustomButton
           label="Complete Registration"
           onPress={handleSubmit}
@@ -130,7 +131,8 @@ export function RegistrationFormScreen({
           isLoading={isLoading}
         />
       </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

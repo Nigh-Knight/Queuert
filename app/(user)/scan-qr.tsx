@@ -18,7 +18,6 @@ import { Colors, Spacing } from '@/constants/theme';
 export default function ScanQRScreen() {
   const router = useRouter();
   const [isValidating, setIsValidating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   // Get registration data from route params
   const {
@@ -35,21 +34,28 @@ export default function ScanQRScreen() {
     estimatedWeight: string;
   }>();
 
-  const validateSessionQR = useMutation(api.auth.validateSessionQR);
   const registerUser = useMutation(api.auth.registerServiceUser);
   const submitIntake = useMutation(api.intake.submitIntakeForm);
 
   const handleScan = async (qrCode: string) => {
     setIsValidating(true);
-    setError(null);
 
     try {
-      // Step 1: Validate session QR code
-      const sessionResult = await validateSessionQR({ qrCode });
+      // Step 1: Parse volunteer QR code JSON (format: { sessionId, volunteerId, type })
+      let sessionId: string;
+      try {
+        const qrData = JSON.parse(qrCode);
+        if (qrData.type !== 'volunteer_join' || !qrData.sessionId) {
+          throw new Error('Invalid volunteer QR code format');
+        }
+        sessionId = qrData.sessionId;
+      } catch {
+        throw new Error('QR code is not a valid volunteer code');
+      }
 
       // Step 2: Register service user
       const userResult = await registerUser({
-        sessionId: sessionResult.sessionId,
+        sessionId: sessionId as any,
         firstName: firstName || '',
         lastName: lastName || '',
         // Note: phone is optional - not collected in registration form
@@ -64,15 +70,15 @@ export default function ScanQRScreen() {
         livingCondition: (livingCondition as 'homeless' | 'sheltered' | 'loads') || 'homeless',
         estimatedLaundryLoads: parseInt(estimatedLoads || '1'),
         estimatedLaundryWeightLbs: parseInt(estimatedWeight || '10'),
-        sessionId: sessionResult.sessionId,
+        sessionId: userResult.sessionId,
       });
 
       // Step 4: Save session to AsyncStorage
       await SessionStorage.save({
-        sessionId: sessionResult.sessionId as string,
+        sessionId: userResult.sessionId as string,
         role: 'service_user',
         userId: userResult.userId as string,
-        location: sessionResult.location,
+        location: userResult.location,
         timestamp: Date.now(),
       });
 
@@ -80,13 +86,11 @@ export default function ScanQRScreen() {
       router.replace('/(user)/status');
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to validate QR code';
-      setError(errorMessage);
       Alert.alert('QR Scan Failed', errorMessage, [
         {
           text: 'Try Again',
           onPress: () => {
             setIsValidating(false);
-            setError(null);
           },
         },
         {
@@ -97,6 +101,7 @@ export default function ScanQRScreen() {
           style: 'cancel',
         },
       ]);
+      setIsValidating(false);
     }
   };
 
@@ -108,7 +113,6 @@ export default function ScanQRScreen() {
         <QRScanner
           onScanComplete={handleScan}
           onError={(err) => {
-            setError(err);
             Alert.alert('Scan Error', err);
           }}
         />
