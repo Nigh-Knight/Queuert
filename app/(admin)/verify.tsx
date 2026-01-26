@@ -14,11 +14,11 @@ import {
   View,
   Text,
   ScrollView,
-  SafeAreaView,
   StyleSheet,
   TextInput,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -96,7 +96,7 @@ export default function AdminVerifyScreen() {
     <SafeAreaView style={styles.container}>
       <Header title="Admin Access" />
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         <Text style={styles.description}>
@@ -110,16 +110,16 @@ export default function AdminVerifyScreen() {
         <Text style={styles.hint}>
           Contact your system administrator if you don&apos;t have the code
         </Text>
-      </ScrollView>
 
-      <View style={styles.footer}>
-        <CustomButton
-          label="Verify"
-          onPress={handleVerify}
-          disabled={code.trim().length === 0}
-          isLoading={isVerifying}
-        />
-      </View>
+        <View style={styles.footer}>
+          <CustomButton
+            label="Verify"
+            onPress={handleVerify}
+            disabled={code.trim().length === 0}
+            isLoading={isVerifying}
+          />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -129,9 +129,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  content: {
+  scrollContent: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.xl,
+    paddingBottom: Spacing.lg,
   },
   description: {
     fontSize: Typography.body.fontSize,
