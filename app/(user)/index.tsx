@@ -18,12 +18,12 @@ import { Colors } from '@/constants/theme';
 export default function UserIndex() {
   const router = useRouter();
   const [sessionData, setSessionData] = useState<any>(null);
-  const [isChecking, setIsChecking] = useState(true);
+  const [shouldCheckSession, setShouldCheckSession] = useState(false);
 
-  // Query session if we have sessionData
+  // Query session only if we have sessionData and want to check it
   const session = useQuery(
     api.sessions.getSessionById,
-    sessionData?.sessionId ? { sessionId: sessionData.sessionId } : 'skip'
+    shouldCheckSession && sessionData?.sessionId ? { sessionId: sessionData.sessionId } : 'skip'
   );
 
   useEffect(() => {
@@ -31,9 +31,21 @@ export default function UserIndex() {
   }, []);
 
   useEffect(() => {
-    // Once we have session data, wait for query result
-    if (sessionData && session !== undefined) {
-      if (session && session.isActive && sessionData.role === 'service_user') {
+    // Add timeout to prevent infinite loading - fallback to registration after 3 seconds
+    if (shouldCheckSession) {
+      const timeout = setTimeout(() => {
+        console.log('Session check timeout, redirecting to registration');
+        router.replace('/(user)/registration');
+      }, 3000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [shouldCheckSession, router]);
+
+  useEffect(() => {
+    // If we're checking session and query resolved, handle navigation
+    if (shouldCheckSession && session !== undefined) {
+      if (session && session.isActive && sessionData?.role === 'service_user') {
         // Active session exists, go to status screen
         router.replace('/(user)/status');
       } else {
@@ -41,22 +53,24 @@ export default function UserIndex() {
         router.replace('/(user)/registration');
       }
     }
-  }, [session, sessionData]);
+  }, [session, shouldCheckSession, sessionData, router]);
 
   const checkSession = async () => {
     try {
       const data = await SessionStorage.load();
-      if (data) {
-        setSessionData(data);
-      } else {
-        // No session, start with registration
+
+      if (!data || data.role !== 'service_user') {
+        // No session or wrong role, go directly to registration
         router.replace('/(user)/registration');
+        return;
       }
+
+      // Has service user session data, check if session is still active
+      setSessionData(data);
+      setShouldCheckSession(true);
     } catch (error) {
       console.error('Error checking session:', error);
       router.replace('/(user)/registration');
-    } finally {
-      setIsChecking(false);
     }
   };
 
