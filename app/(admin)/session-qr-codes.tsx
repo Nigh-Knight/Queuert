@@ -73,16 +73,7 @@ export default function SessionQRCodes() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Header
-        title="📱 Volunteer QR Codes"
-        rightAction={
-          <CustomButton
-            label="✅ Done"
-            onPress={handleDone}
-            variant="secondary"
-          />
-        }
-      />
+      <Header title="📱 Volunteer QR Codes" />
 
       <FlatList
         data={volunteers}
@@ -104,19 +95,31 @@ export default function SessionQRCodes() {
         )}
       />
 
-      {/* Pagination dots */}
-      <View style={[styles.pagination, {
+      {/* Footer with Done button (only on last page) and pagination dots */}
+      <View style={[styles.footer, {
         paddingBottom: Math.max(insets.bottom, 20) + 16 + Spacing.lg, // Account for nav bar height + top padding
       }]}>
-        {volunteers.map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.dot,
-              index === currentIndex && styles.dotActive,
-            ]}
+        {/* Show Done button only on last page */}
+        {currentIndex === volunteers.length - 1 && (
+          <CustomButton
+            label="Done"
+            onPress={handleDone}
+            variant="primary"
           />
-        ))}
+        )}
+
+        {/* Pagination dots */}
+        <View style={styles.pagination}>
+          {volunteers.map((_, index) => (
+            <View
+              key={index}
+              style={[
+                styles.dot,
+                index === currentIndex && styles.dotActive,
+              ]}
+            />
+          ))}
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -138,12 +141,20 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: Spacing.md,
   },
+  footer: {
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.lg,
+    gap: Spacing.md,
+    alignItems: 'center',
+    minHeight: 80, // Reserve consistent space for footer
+    justifyContent: 'flex-end',
+  },
   pagination: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: Spacing.lg,
     gap: Spacing.sm,
+    paddingVertical: Spacing.sm,
   },
   dot: {
     width: 8,

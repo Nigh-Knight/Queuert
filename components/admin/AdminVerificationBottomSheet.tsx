@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { BottomSheetView } from '@gorhom/bottom-sheet';
 import { Colors, Spacing, Typography } from '@/constants/theme';
 import { CustomButton } from '@/components/provider/atoms/CustomButton';
@@ -16,7 +16,12 @@ export function AdminVerificationBottomSheet({ onVerified, onClose }: AdminVerif
   const [error, setError] = useState<string | null>(null);
 
   // TODO: Replace with actual verification phrase from environment/config
-  const CORRECT_PHRASE = 'laundry-admin-2024';
+  const CORRECT_PHRASE = 'kepler cool';
+
+  const handleClose = () => {
+    Keyboard.dismiss();
+    onClose();
+  };
 
   const handleVerify = async () => {
     setError(null);
@@ -36,48 +41,54 @@ export function AdminVerificationBottomSheet({ onVerified, onClose }: AdminVerif
   const isButtonDisabled = verificationPhrase.trim().length === 0 || isLoading;
 
   return (
-    <View style={styles.container}>
+    <BottomSheetView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>🔐 Admin Verification</Text>
       </View>
 
-      <BottomSheetView style={styles.content}>
-        <Text style={styles.description}>
-          Enter the admin verification phrase to access session management
-        </Text>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardAvoid}
+      >
+        <View style={styles.content}>
+          <View style={styles.formContent}>
+            <Text style={styles.description}>
+              Enter the admin verification phrase to access session management
+            </Text>
 
-        {error && (
-          <View style={styles.errorBanner}>
-            <Text style={styles.errorText}>⚠️ {error}</Text>
+            {error && (
+              <View style={styles.errorBanner}>
+                <Text style={styles.errorText}>⚠️ {error}</Text>
+              </View>
+            )}
+
+            <InputField
+              label="Verification Phrase"
+              placeholder="Enter admin phrase"
+              value={verificationPhrase}
+              onChangeText={(text) => {
+                setVerificationPhrase(text);
+                setError(null);
+              }}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+
+            <Text style={styles.hint}>
+              💡 Contact the creator if you don't know the phrase
+            </Text>
           </View>
-        )}
 
-        <InputField
-          label="Verification Phrase"
-          placeholder="Enter admin phrase"
-          value={verificationPhrase}
-          onChangeText={(text) => {
-            setVerificationPhrase(text);
-            setError(null);
-          }}
-          secureTextEntry
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-
-        <Text style={styles.hint}>
-          💡 Contact your team leader if you don't have the phrase
-        </Text>
-
-        <CustomButton
-          label="Verify"
-          onPress={handleVerify}
-          variant="primary"
-          isLoading={isLoading}
-          disabled={isButtonDisabled}
-        />
-      </BottomSheetView>
-    </View>
+          <CustomButton
+            label="Verify"
+            onPress={handleVerify}
+            variant="primary"
+            isLoading={isLoading}
+            disabled={isButtonDisabled}
+          />
+        </View>
+      </KeyboardAvoidingView>
+    </BottomSheetView>
   );
 }
 
@@ -87,8 +98,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   header: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.xs,
+    paddingBottom: 0,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
@@ -98,15 +110,22 @@ const styles = StyleSheet.create({
     color: Colors.text.primary,
     textAlign: 'center',
   },
+  keyboardAvoid: {
+    flex: 1,
+  },
   content: {
-    padding: Spacing.lg,
-    gap: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.sm,
+    paddingBottom: 0,
+  },
+  formContent: {
+    gap: Spacing.xs,
+    marginBottom: 0,
   },
   description: {
     fontSize: Typography.body.fontSize,
     color: Colors.text.secondary,
     lineHeight: Typography.body.lineHeight,
-    marginBottom: Spacing.sm,
   },
   errorBanner: {
     backgroundColor: Colors.alert,
@@ -122,6 +141,6 @@ const styles = StyleSheet.create({
     fontSize: Typography.caption.fontSize,
     color: Colors.text.tertiary,
     lineHeight: Typography.caption.lineHeight,
-    marginBottom: Spacing.md,
+    textAlign: 'center'
   },
 });

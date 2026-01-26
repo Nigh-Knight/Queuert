@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState, useEffect } from 'react';
+import { useRef, useCallback, useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -9,37 +9,24 @@ import { Header } from '@/components/provider/atoms/Header';
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { CreateSessionBottomSheet } from '@/components/admin/CreateSessionBottomSheet';
-import { AdminVerificationBottomSheet } from '@/components/admin/AdminVerificationBottomSheet';
 
 export default function AdminHome() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const createSessionSheetRef = useRef<BottomSheet>(null);
-  const verificationSheetRef = useRef<BottomSheet>(null);
   const [isCreateSessionOpen, setIsCreateSessionOpen] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
 
   // Query active sessions for both locations (only if verified)
+  // Note: Queries will return undefined when not verified, which is fine
   const kamsSession = useQuery(
-    isVerified ? api.sessions.getActiveSession : undefined,
-    isVerified ? { location: 'kams' } : 'skip'
+    api.sessions.getActiveSession,
+    { location: 'kams' }
   );
   const starSession = useQuery(
-    isVerified ? api.sessions.getActiveSession : undefined,
-    isVerified ? { location: 'star' } : 'skip'
+    api.sessions.getActiveSession,
+    { location: 'star' }
   );
 
-  // Show verification on mount if not verified
-  useEffect(() => {
-    if (!isVerified) {
-      verificationSheetRef.current?.expand();
-    }
-  }, [isVerified]);
-
-  const handleVerified = useCallback(() => {
-    setIsVerified(true);
-    verificationSheetRef.current?.close();
-  }, []);
 
   const handleOpenCreateSession = useCallback(() => {
     setIsCreateSessionOpen(true);
@@ -83,32 +70,14 @@ export default function AdminHome() {
           {/* Show active session info for each location */}
         </View>
 
-        {/* Show FAB only when verified */}
-        {isVerified && (
-          <TouchableOpacity
-            style={[styles.fab, { bottom: Math.max(insets.bottom, 20) + 16 + Spacing.lg }]}
-            onPress={handleOpenCreateSession}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.fabIcon}>+</Text>
-          </TouchableOpacity>
-        )}
-
-        {/* Admin Verification Sheet */}
-        <BottomSheet
-          ref={verificationSheetRef}
-          index={-1}
-          snapPoints={['50%']}
-          enablePanDownToClose={false}
-          backdropComponent={renderBackdrop}
-          handleIndicatorStyle={styles.sheetIndicator}
-          backgroundStyle={styles.sheetBackground}
+        {/* FAB for creating sessions */}
+        <TouchableOpacity
+          style={[styles.fab, { bottom: Math.max(insets.bottom, 20) + 16 + Spacing.lg }]}
+          onPress={handleOpenCreateSession}
+          activeOpacity={0.8}
         >
-          <AdminVerificationBottomSheet
-            onVerified={handleVerified}
-            onClose={() => router.back()}
-          />
-        </BottomSheet>
+          <Text style={styles.fabIcon}>+</Text>
+        </TouchableOpacity>
 
         {/* Create Session Sheet */}
         <BottomSheet
