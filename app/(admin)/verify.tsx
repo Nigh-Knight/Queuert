@@ -35,8 +35,6 @@ export default function AdminVerifyScreen() {
 
   const verifyAdminCode = useMutation(api.auth.verifyAdminCode);
 
-  const codeLength = 11; // "kepler cool" is 11 characters (including space)
-
   const handleCodeChange = (text: string) => {
     setCode(text);
   };
@@ -49,7 +47,7 @@ export default function AdminVerifyScreen() {
 
     setIsVerifying(true);
     try {
-      const result = await verifyAdminCode({ code });
+      await verifyAdminCode({ code });
 
       // Save admin session to AsyncStorage
       await SessionStorage.save({
@@ -114,7 +112,7 @@ export default function AdminVerifyScreen() {
         </View>
 
         <Text style={styles.hint}>
-          Contact your system administrator if you don't have the code
+          Contact your system administrator if you don&apos;t have the code
         </Text>
       </ScrollView>
 
