@@ -194,3 +194,28 @@ export const registerServiceUser = mutation({
     };
   },
 });
+
+/**
+ * Verify admin access code
+ * Uses hardcoded verification code for MVP
+ */
+export const verifyAdminCode = mutation({
+  args: {
+    code: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Hardcoded admin verification code (from CONTEXT.md)
+    const ADMIN_CODE = "kepler cool";
+
+    // Case-insensitive comparison with trimmed input
+    if (args.code.trim().toLowerCase() !== ADMIN_CODE.toLowerCase()) {
+      throw new Error("Invalid verification code");
+    }
+
+    return {
+      role: "service_provider" as const,
+      verified: true,
+      // Note: No sessionId - admin creates sessions after verification
+    };
+  },
+});
