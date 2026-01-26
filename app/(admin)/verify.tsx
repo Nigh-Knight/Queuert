@@ -71,10 +71,6 @@ export default function AdminVerifyScreen() {
     }
   };
 
-  const handleBack = () => {
-    router.back();
-  };
-
   const renderCodeInput = () => {
     return (
       <View style={styles.codeInputContainer}>
@@ -98,7 +94,8 @@ export default function AdminVerifyScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Admin Access" onBackPress={handleBack} />
+      <View style={styles.topPadding} />
+      <Header title="Admin Access" />
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
@@ -132,6 +129,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
+  },
+  topPadding: {
+    height: Spacing.lg,
   },
   content: {
     paddingHorizontal: Spacing.lg,
