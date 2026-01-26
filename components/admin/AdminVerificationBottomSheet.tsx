@@ -110,13 +110,11 @@ const styles = StyleSheet.create({
     color: Colors.text.primary,
     textAlign: 'center',
   },
-  keyboardAvoid: {
-    flex: 1,
-  },
+  keyboardAvoid: {},
   content: {
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.sm,
-    paddingBottom: 0,
+    paddingBottom: Spacing.md,
   },
   formContent: {
     gap: Spacing.xs,
