@@ -4,6 +4,7 @@ import { RoleSelectionScreen } from '@/components/provider/screens/RoleSelection
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AdminVerificationBottomSheet } from '@/components/admin/AdminVerificationBottomSheet';
+import { SessionGuard } from '@/components/auth/SessionGuard';
 import { StyleSheet, Keyboard } from 'react-native';
 import { Colors } from '@/constants/theme';
 
@@ -41,6 +42,11 @@ export default function ProviderApp() {
     verificationSheetRef.current?.close();
   }, []);
 
+  const handleSessionEnd = () => {
+    // Session ended, stay on role selection (already here)
+    // User can select a new role to join a different session
+  };
+
   const renderBackdrop = useCallback(
     (props: any) => (
       <BottomSheetBackdrop
@@ -57,33 +63,35 @@ export default function ProviderApp() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <RoleSelectionScreen
-        onRoleSelect={handleRoleSelect}
-      />
+      <SessionGuard onSessionEnd={handleSessionEnd}>
+        <RoleSelectionScreen
+          onRoleSelect={handleRoleSelect}
+        />
 
       {/* Admin Verification Sheet */}
-      <BottomSheet
-        ref={verificationSheetRef}
-        index={-1}
-        snapPoints={['50%', '75%']}
-        enablePanDownToClose
-        backdropComponent={renderBackdrop}
-        handleIndicatorStyle={styles.sheetIndicator}
-        backgroundStyle={styles.sheetBackground}
-        keyboardBehavior="extend"
-        keyboardBlurBehavior="restore"
-        android_keyboardInputMode="adjustResize"
-        onChange={(index) => {
-          if (index === -1) {
-            Keyboard.dismiss();
-          }
-        }}
-      >
-        <AdminVerificationBottomSheet
-          onVerified={handleVerified}
-          onClose={handleCloseVerification}
-        />
-      </BottomSheet>
+        <BottomSheet
+          ref={verificationSheetRef}
+          index={-1}
+          snapPoints={['50%', '75%']}
+          enablePanDownToClose
+          backdropComponent={renderBackdrop}
+          handleIndicatorStyle={styles.sheetIndicator}
+          backgroundStyle={styles.sheetBackground}
+          keyboardBehavior="extend"
+          keyboardBlurBehavior="restore"
+          android_keyboardInputMode="adjustResize"
+          onChange={(index) => {
+            if (index === -1) {
+              Keyboard.dismiss();
+            }
+          }}
+        >
+          <AdminVerificationBottomSheet
+            onVerified={handleVerified}
+            onClose={handleCloseVerification}
+          />
+        </BottomSheet>
+      </SessionGuard>
     </GestureHandlerRootView>
   );
 }
