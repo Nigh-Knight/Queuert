@@ -1,6 +1,15 @@
+/**
+ * DEPRECATED: Use app/(admin)/verify.tsx instead for admin authentication flow
+ *
+ * This component is kept for potential future use (e.g., confirming sensitive actions
+ * within the admin dashboard), but the main admin login flow now uses the full-screen
+ * verify page which properly integrates with Convex and session storage.
+ */
 import { useState } from 'react';
 import { View, StyleSheet, Text, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { BottomSheetView } from '@gorhom/bottom-sheet';
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 import { Colors, Spacing, Typography } from '@/constants/theme';
 import { CustomButton } from '@/components/provider/atoms/CustomButton';
 import { InputField } from '@/components/provider/atoms/InputField';
@@ -15,8 +24,7 @@ export function AdminVerificationBottomSheet({ onVerified, onClose }: AdminVerif
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // TODO: Replace with actual verification phrase from environment/config
-  const CORRECT_PHRASE = 'kepler cool';
+  const verifyAdminCode = useMutation(api.auth.verifyAdminCode);
 
   const handleClose = () => {
     Keyboard.dismiss();
@@ -27,15 +35,14 @@ export function AdminVerificationBottomSheet({ onVerified, onClose }: AdminVerif
     setError(null);
     setIsLoading(true);
 
-    // Simulate verification delay
-    setTimeout(() => {
-      if (verificationPhrase.trim().toLowerCase() === CORRECT_PHRASE) {
-        onVerified();
-      } else {
-        setError('Incorrect verification phrase. Please try again.');
-      }
+    try {
+      await verifyAdminCode({ code: verificationPhrase });
       setIsLoading(false);
-    }, 500);
+      onVerified();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Incorrect verification phrase. Please try again.');
+      setIsLoading(false);
+    }
   };
 
   const isButtonDisabled = verificationPhrase.trim().length === 0 || isLoading;
