@@ -6,34 +6,34 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 
 **Core value:** Volunteers can efficiently manage the laundry queue and timers in real-time during events, ensuring service users know their position and when their wash completes.
 
-**Current focus:** Real-Time Infrastructure & Session Management
+**Current focus:** Authentication & Role Access
 
 ## Current Position
 
 Phase: 2 of 10 (Authentication & Role Access)
-Plan: 1 of 7 (completed)
+Plan: 2 of 7 (completed)
 Status: In progress
-Last activity: 2026-01-26 — Completed 02-01-PLAN.md (Auth Foundation)
+Last activity: 2026-01-26 — Completed 02-02-PLAN.md (QR Scanner Component)
 
-Progress: [█████░░░░░] 50%
+Progress: [██████░░░░] 60%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 2.2 min
-- Total execution time: 0.22 hours
+- Total plans completed: 7
+- Average duration: 2.1 min
+- Total execution time: 0.25 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 5 | 12min | 2.4min |
-| 02 | 1 | 1min | 1.0min |
+| 02 | 2 | 3min | 1.5min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (5min), 01-03 (2min), 01-04 (1min), 01-05 (2min checkpoint), 02-01 (1min)
-- Trend: Very efficient execution (<2min avg last 3)
+- Last 5 plans: 01-03 (2min), 01-04 (1min), 01-05 (2min checkpoint), 02-01 (1min), 02-02 (2min)
+- Trend: Very efficient execution (<2min avg last 5)
 
 *Updated after each plan completion*
 
@@ -57,6 +57,8 @@ Recent decisions affecting current work:
 - 24-hour session expiry: Balances convenience and security for multi-day testing (02-01)
 - Phone duplicate checking scoped to session: Same phone can appear in different sessions but not duplicate within single session (02-01)
 - All Convex auth queries use indexes: Follows Phase 1 pattern for 10-100x performance improvement (02-01)
+- Use CameraView instead of deprecated alternatives: expo-barcode-scanner and old Camera component deprecated in Expo SDK 54 (02-02)
+- Prevent duplicate scans with useRef: Avoids re-render during scan, provides immediate flag update (02-02)
 
 ### Pending Todos
 
@@ -75,7 +77,7 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-01-26 (phase execution)
-Stopped at: Completed 02-01-PLAN.md (Auth Foundation), ready for 02-02
+Stopped at: Completed 02-02-PLAN.md (QR Scanner Component), ready for 02-03
 Resume file: None
 
 ---
