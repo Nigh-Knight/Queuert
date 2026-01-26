@@ -19,9 +19,12 @@ export default function ProviderApp() {
       // Show verification before navigating to admin
       setPendingNavigation(true);
       verificationSheetRef.current?.expand();
+    } else if (role === 'serviceUser') {
+      // Navigate to service user flow (scan session QR)
+      router.push('/(user)');
     } else {
-      // For now, just log - future phases will handle volunteer/service user flows
-      console.log('Service user and volunteer flows coming in future phases');
+      // Volunteer flow coming in future phase
+      console.log('Volunteer flow coming in future phase');
     }
   };
 
