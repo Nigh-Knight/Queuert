@@ -58,6 +58,7 @@ Recent decisions affecting current work:
 
 1. **Wire existing UI components to Convex mutations** (ui) - Connect placeholder screens in /components/volunteer to backend once Phases 1-10 complete
 2. **Wire existing UI components in /components/admin to Convex mutations** (ui) - Connect admin screens to backend after Phase 1 & Phase 7 complete
+3. **Fix excessive padding in admin verification bottom sheet** (ui) - Reduce white space below Verify button, currently ~40% of sheet is empty
 
 ### Blockers/Concerns
 
