@@ -9,6 +9,11 @@ import { Colors } from '@/constants/theme';
 /**
  * Entry point for service users
  * Checks for existing session and redirects appropriately
+ *
+ * Flow:
+ * - No session → registration (collect info first)
+ * - Has session + active → status (show queue position)
+ * - Has session + ended → registration (start new session)
  */
 export default function UserIndex() {
   const router = useRouter();
@@ -29,11 +34,11 @@ export default function UserIndex() {
     // Once we have session data, wait for query result
     if (sessionData && session !== undefined) {
       if (session && session.isActive && sessionData.role === 'service_user') {
-        // Active session exists, go to queue status
-        router.replace('/(user)/queue-status');
+        // Active session exists, go to status screen
+        router.replace('/(user)/status');
       } else {
-        // Session ended or invalid, go to scan
-        router.replace('/(user)/scan-session');
+        // Session ended or invalid, start over with registration
+        router.replace('/(user)/registration');
       }
     }
   }, [session, sessionData]);
@@ -44,12 +49,12 @@ export default function UserIndex() {
       if (data) {
         setSessionData(data);
       } else {
-        // No session, go to scan
-        router.replace('/(user)/scan-session');
+        // No session, start with registration
+        router.replace('/(user)/registration');
       }
     } catch (error) {
       console.error('Error checking session:', error);
-      router.replace('/(user)/scan-session');
+      router.replace('/(user)/registration');
     } finally {
       setIsChecking(false);
     }
