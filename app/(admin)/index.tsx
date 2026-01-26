@@ -1,5 +1,5 @@
-import { useRef, useCallback, useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { useRef, useCallback, useState, useEffect } from 'react';
+import { View, StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useQuery, useMutation } from 'convex/react';
@@ -9,12 +9,32 @@ import { Header } from '@/components/provider/atoms/Header';
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { CreateSessionBottomSheet } from '@/components/admin/CreateSessionBottomSheet';
+import { SessionStorage } from '@/utils/session-storage';
 
 export default function AdminHome() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const createSessionSheetRef = useRef<BottomSheet>(null);
   const [isCreateSessionOpen, setIsCreateSessionOpen] = useState(false);
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
+
+  // Check for existing session on mount
+  useEffect(() => {
+    const checkSession = async () => {
+      const session = await SessionStorage.load();
+
+      if (!session || session.role !== 'service_provider') {
+        // No admin session - redirect to verify
+        router.replace('/(admin)/verify');
+        return;
+      }
+
+      // Valid admin session exists
+      setIsCheckingSession(false);
+    };
+
+    checkSession();
+  }, [router]);
 
   // Query active sessions for both locations (only if verified)
   // Note: Queries will return undefined when not verified, which is fine
@@ -26,7 +46,6 @@ export default function AdminHome() {
     api.sessions.getActiveSession,
     { location: 'star' }
   );
-
 
   const handleOpenCreateSession = useCallback(() => {
     setIsCreateSessionOpen(true);
@@ -59,6 +78,17 @@ export default function AdminHome() {
     ),
     []
   );
+
+  // Show loading state while checking session
+  if (isCheckingSession) {
+    return (
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={Colors.primary} />
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -102,6 +132,11 @@ export default function AdminHome() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   content: { flex: 1, padding: Spacing.md },
   fab: {
     position: 'absolute',
