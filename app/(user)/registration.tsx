@@ -33,15 +33,9 @@ export default function UserRegistration() {
     });
   };
 
-  const handleBack = () => {
-    // Navigate back to provider selection
-    router.push('/provider');
-  };
-
   return (
     <RegistrationFormScreen
       onSubmit={handleSubmit}
-      onBack={handleBack}
     />
   );
 }

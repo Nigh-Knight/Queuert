@@ -14,7 +14,6 @@ import { CustomButton } from '../atoms/CustomButton';
 
 export interface RegistrationFormScreenProps {
   onSubmit: (formData: RegistrationData) => void;
-  onBack?: () => void;
 }
 
 export interface RegistrationData {
@@ -34,7 +33,6 @@ const LIVING_CONDITION_OPTIONS: DropdownOption[] = [
 
 export function RegistrationFormScreen({
   onSubmit,
-  onBack,
 }: RegistrationFormScreenProps) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -68,7 +66,7 @@ export function RegistrationFormScreen({
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Complete Your Profile" onBackPress={onBack} />
+      <Header title="Complete Your Profile" />
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
@@ -140,6 +138,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
+    paddingTop: Spacing.xl,
   },
   content: {
     paddingHorizontal: Spacing.lg,
