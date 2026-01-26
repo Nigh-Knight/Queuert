@@ -204,6 +204,53 @@ interface RegistrationFormScreenProps {
 - Never hardcode colors, sizes, or spacing values
 - For theme-aware components, use `useThemeColor()` hook
 
+### UI/UX Rules
+
+#### No Back Buttons
+Never add custom back buttons in headers or navigation components. Users should rely on their device's native back button.
+
+**Implementation:**
+- Set `headerBackVisible: false` in Stack.Screen options
+- Remove any custom back button implementations from Header components
+- Let the native navigation handle back gestures and buttons
+
+```typescript
+// Correct: Hide default back button, rely on native
+<Stack.Screen
+  name="screen-name"
+  options={{ headerBackVisible: false }}
+/>
+
+// Incorrect: Custom back button in header
+<Header title="Screen" onBack={() => navigation.goBack()} />
+```
+
+#### Camera Safe Area
+All top sections must respect device safe areas to avoid overlapping with front-facing cameras, notches, and system UI.
+
+**Implementation:**
+- Use `SafeAreaView` from `react-native-safe-area-context` for top-level containers
+- Always apply safe area insets to headers and top content
+- Test on devices with notches (iPhone X+, modern Android devices)
+
+```typescript
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+// Correct: Wrap screen content with SafeAreaView
+<SafeAreaView style={styles.container}>
+  <Header title="Screen Title" />
+  {/* Content */}
+</SafeAreaView>
+
+// Alternative: Use paddingTop with useSafeAreaInsets
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+const insets = useSafeAreaInsets();
+<View style={{ paddingTop: insets.top }}>
+  <Header title="Screen Title" />
+</View>
+```
+
 ### Convex Function Patterns
 ```typescript
 // Mutation (write operation)
