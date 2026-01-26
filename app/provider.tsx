@@ -23,9 +23,9 @@ export default function ProviderApp() {
     } else if (role === 'serviceUser') {
       // Navigate to service user flow (scan session QR)
       router.push('/(user)');
-    } else {
-      // Volunteer flow coming in future phase
-      console.log('Volunteer flow coming in future phase');
+    } else if (role === 'volunteer') {
+      // Navigate to volunteer flow (scan volunteer QR)
+      router.push('/(volunteer)');
     }
   };
 
