@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -99,13 +100,9 @@ export default function ScanQRScreen() {
     }
   };
 
-  const handleBack = () => {
-    router.back();
-  };
-
   return (
-    <View style={styles.container}>
-      <Header title="Scan Session QR" onBackPress={handleBack} />
+    <SafeAreaView style={styles.container}>
+      <Header title="Scan Session QR" />
 
       <View style={styles.scannerContainer}>
         <QRScanner
@@ -128,7 +125,7 @@ export default function ScanQRScreen() {
           </View>
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
