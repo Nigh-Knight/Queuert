@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, StyleSheet, FlatList, Dimensions, Text, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, FlatList, Dimensions, Text, ActivityIndicator, ScrollView } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMutation, useQuery } from 'convex/react';
@@ -9,6 +9,7 @@ import { Colors, Spacing, Typography } from '@/constants/theme';
 import { Header } from '@/components/provider/atoms/Header';
 import { CustomButton } from '@/components/provider/atoms/CustomButton';
 import { QRCodeSlide } from '@/components/admin/QRCodeSlide';
+import { SessionQRCode } from '@/components/admin/SessionQRCode';
 
 const { width } = Dimensions.get('window');
 
@@ -71,12 +72,15 @@ export default function SessionQRCodes() {
     );
   }
 
+  // All QR codes: [session QR, ...volunteer QRs]
+  const allQRCodes = [{ type: 'session', _id: 'session-qr' }, ...volunteers];
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Header title="📱 Volunteer QR Codes" />
+      <Header title="📱 Session QR Codes" />
 
       <FlatList
-        data={volunteers}
+        data={allQRCodes}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
@@ -85,14 +89,28 @@ export default function SessionQRCodes() {
           const index = Math.round(event.nativeEvent.contentOffset.x / width);
           setCurrentIndex(index);
         }}
-        renderItem={({ item, index }) => (
-          <QRCodeSlide
-            sessionId={sessionId}
-            qrCode={item.qrCode}
-            index={index}
-            total={volunteers.length}
-          />
-        )}
+        renderItem={({ item, index }) => {
+          if (item.type === 'session') {
+            // First page: Session QR for service users
+            return (
+              <View style={styles.slideContainer}>
+                <SessionQRCode sessionId={sessionId} showInstructions />
+                <Text style={styles.swipeHint}>
+                  👉 Swipe right for volunteer codes
+                </Text>
+              </View>
+            );
+          }
+          // Subsequent pages: Volunteer QR codes
+          return (
+            <QRCodeSlide
+              sessionId={sessionId}
+              qrCode={(item as any).qrCode}
+              index={index}
+              total={allQRCodes.length}
+            />
+          );
+        }}
       />
 
       {/* Footer with Done button (only on last page) and pagination dots */}
@@ -100,7 +118,7 @@ export default function SessionQRCodes() {
         paddingBottom: Math.max(insets.bottom, 20) + 16 + Spacing.lg, // Account for nav bar height + top padding
       }]}>
         {/* Show Done button only on last page */}
-        {currentIndex === volunteers.length - 1 && (
+        {currentIndex === allQRCodes.length - 1 && (
           <CustomButton
             label="Done"
             onPress={handleDone}
@@ -110,9 +128,9 @@ export default function SessionQRCodes() {
 
         {/* Pagination dots */}
         <View style={styles.pagination}>
-          {volunteers.map((_, index) => (
+          {allQRCodes.map((item, index) => (
             <View
-              key={index}
+              key={item._id}
               style={[
                 styles.dot,
                 index === currentIndex && styles.dotActive,
@@ -140,6 +158,18 @@ const styles = StyleSheet.create({
     color: Colors.text.secondary,
     textAlign: 'center',
     marginTop: Spacing.md,
+  },
+  slideContainer: {
+    flex: 1,
+    width: width,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.background,
+  },
+  swipeHint: {
+    ...Typography.caption,
+    color: Colors.text.tertiary,
+    marginTop: Spacing.xl,
   },
   footer: {
     paddingHorizontal: Spacing.lg,

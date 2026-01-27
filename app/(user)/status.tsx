@@ -87,7 +87,7 @@ export default function StatusScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <Header title="Your Queue Status" />
 
       <View style={styles.content}>

@@ -44,16 +44,16 @@ export default function ScanQRScreen() {
     setIsValidating(true);
 
     try {
-      // Step 1: Parse volunteer QR code JSON (format: { sessionId, volunteerId, type })
+      // Step 1: Parse session QR code JSON (format: { sessionId, type: 'session_join' })
       let sessionId: string;
       try {
         const qrData = JSON.parse(qrCode);
-        if (qrData.type !== 'volunteer_join' || !qrData.sessionId) {
-          throw new Error('Invalid volunteer QR code format');
+        if (qrData.type !== 'session_join' || !qrData.sessionId) {
+          throw new Error('Invalid session QR code format');
         }
         sessionId = qrData.sessionId;
       } catch {
-        throw new Error('QR code is not a valid volunteer code');
+        throw new Error('QR code is not a valid session code');
       }
 
       // Step 2: Register service user

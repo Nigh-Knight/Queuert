@@ -415,25 +415,27 @@ export default function VolunteerDashboard() {
   );
 
   const renderQRCode = () => {
-    // Generate QR code value matching service user scanner expectations
+    // Generate SESSION QR code value for service users (not volunteer QR!)
     const qrValue = JSON.stringify({
       sessionId,
-      volunteerId: currentVolunteerQR,
-      type: 'volunteer_join',
+      type: 'session_join',
     });
 
     return (
       <ScrollView style={styles.tabContent} contentContainerStyle={styles.qrContent}>
         <View style={styles.qrHeader}>
-          <Text style={styles.qrTitle}>Your QR Code</Text>
+          <Text style={styles.qrTitle}>Session QR Code</Text>
           <Text style={styles.qrSubtitle}>
             Have service users scan this code to join the queue
+          </Text>
+          <Text style={[styles.qrSubtitle, { marginTop: Spacing.sm, fontSize: 12, color: Colors.text.tertiary }]}>
+            (This is different from your volunteer QR code)
           </Text>
         </View>
 
         {/* QR Code Display */}
         <View style={styles.qrCodeContainer}>
-          {currentVolunteerQR ? (
+          {sessionId ? (
             <View style={styles.qrCodeWrapper}>
               <QRCode
                 value={qrValue}
