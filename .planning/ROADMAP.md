@@ -75,18 +75,21 @@ Plans:
 - [x] 02-08-PLAN.md - Fix volunteer ID mismatch bug (gap closure)
 
 ### Phase 3: Queue Operations & Management
-**Goal**: Volunteers can view the full queue, add users (via QR or manual entry), remove users, reorder the queue, and search by name/phone, with positions auto-updating across all devices.
+**Goal**: Volunteers can view the full queue, add users manually, remove users, reorder the queue, and search by name, with positions auto-updating across all devices.
 
 **Depends on**: Phase 2 (requires authentication to differentiate volunteer permissions)
 
-**Requirements**: QUEUE-01, QUEUE-02, QUEUE-03, QUEUE-04, QUEUE-05, QUEUE-06, QUEUE-07, QUEUE-08, QUEUE-09
+**Requirements**: QUEUE-01, QUEUE-02, QUEUE-03, QUEUE-04, QUEUE-05, QUEUE-06, QUEUE-08, QUEUE-09
+
+**Note**: QUEUE-07 (service user self-registration via QR scan) is covered by Phase 5 Service User Intake flow.
 
 **Success Criteria** (what must be TRUE):
   1. Service user can view their current position in queue in real-time
   2. Volunteer can view full queue showing all users, positions, and statuses
   3. When user removed from queue, remaining users auto-reposition without gaps
   4. Volunteer can drag users to different positions to manually reorder queue
-  5. Volunteer can search queue by user name or phone number and find results instantly
+  5. Volunteer can search queue by user name and find results instantly (per CONTEXT.md decision)
+  6. Volunteer can manually add users without phones to the queue via intake form
 
 **Plans**: 5 plans in 3 waves
 
