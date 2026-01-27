@@ -6,23 +6,23 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 
 **Core value:** Volunteers can efficiently manage the laundry queue and timers in real-time during events, ensuring service users know their position and when their wash completes.
 
-**Current focus:** Authentication & Role Access
+**Current focus:** Queue Operations & Management
 
 ## Current Position
 
-Phase: 2 of 10 (Authentication & Role Access)
-Plan: 8 of 8 (completed)
-Status: Complete - Phase verified ✓
-Last activity: 2026-01-27 — Completed Phase 2 with gap closure (02-08: Volunteer ID mismatch fix)
+Phase: 3 of 10 (Queue Operations & Management)
+Plan: 1 of 3
+Status: In progress
+Last activity: 2026-01-27 — Completed 03-01-PLAN.md (Queue Reordering & Auto-Repositioning)
 
-Progress: [██████████] 100%
+Progress: [████████████░░░░░░░░░░░░░░░░] 33%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
-- Average duration: 1.9 min
-- Total execution time: 0.38 hours
+- Total plans completed: 12
+- Average duration: 1.8 min
+- Total execution time: 0.40 hours
 
 **By Phase:**
 
@@ -30,11 +30,12 @@ Progress: [██████████] 100%
 |-------|-------|-------|----------|
 | 01 | 5 | 12min | 2.4min |
 | 02 | 6 | 11min | 1.8min |
+| 03 | 1 | 1min | 1.0min |
 
 **Note:** Plan 02-07 (Human verification checkpoint) and 02-08 (Gap closure) are not included in velocity metrics as they were completed outside automated execution.
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (2min), 02-04 (3min), 02-05 (2min), 02-06 (2min), 02-08 (1min)
+- Last 5 plans: 02-04 (3min), 02-05 (2min), 02-06 (2min), 02-08 (1min), 03-01 (1min)
 - Trend: Consistent efficient execution (1-3min range)
 
 *Updated after each plan completion*
@@ -72,6 +73,9 @@ Recent decisions affecting current work:
 - SessionGuard doesn't auto-route: Separation of concerns - monitors state and shows alerts, doesn't control routing logic (02-06)
 - Skip Convex query when no sessionId: Pass "skip" to prevent unnecessary API calls on fresh installs (02-06)
 - Use volunteer._id instead of volunteer.qrCode for SessionStorage lookups: SessionStorage stores volunteer document ID from validateVolunteerQR, not the qrCode UUID field (02-08)
+- 1-indexed queue positions: Position starts at 1 for intuitive volunteer UX (position 1 = first in line) (03-01)
+- Immediate gap closure on removal: When user removed, subsequent positions auto-decrement to prevent gaps (03-01)
+- Session-scoped reorder validation: reorderQueue validates all queue IDs belong to session before updating (security) (03-01)
 
 ### Pending Todos
 
@@ -87,13 +91,16 @@ Recent decisions affecting current work:
 **Phase 2 (Authentication & Role Access):**
 - Hardcoded admin verification code: "kepler cool" is acceptable for MVP but should be moved to environment variable before production deployment
 
+**Phase 3 (Queue Operations & Management):**
+- Drag-and-drop library compatibility: react-native-reanimated-dnd compatibility with Expo SDK 54 + Reanimated 4.x uncertain (noted in RESEARCH.md as LOW confidence) - test after installation
+
 **Phase 5 (Data Export):**
 - Google Sheets rate limits: Batching at 60-second intervals prevents issues at current scale (100 users, 15 volunteers), but reassess at 1000+ user milestone
 
 ## Session Continuity
 
 Last session: 2026-01-27 (phase execution)
-Stopped at: Completed 02-08-PLAN.md (Volunteer ID Mismatch Fix), Phase 2 complete
+Stopped at: Completed 03-01-PLAN.md (Queue Reordering & Auto-Repositioning)
 Resume file: None
 
 ---
