@@ -13,7 +13,7 @@ This roadmap transforms Queuert from a scaffolded Expo app with UI components in
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Real-Time Infrastructure & Session Management** - Establish Convex reactive queries and session lifecycle
-- [ ] **Phase 2: Authentication & Role Access** - Implement admin codes, volunteer QR scanning, and service user entry
+- [x] **Phase 2: Authentication & Role Access** - Implement admin codes, volunteer QR scanning, and service user entry
 - [ ] **Phase 3: Queue Operations & Management** - Build queue viewing, addition, removal, and repositioning
 - [ ] **Phase 4: Timer System** - Server-authoritative wash cycle timers with real-time sync
 - [ ] **Phase 5: Service User Intake & Experience** - Intake forms, welcome back, and queue position visibility
@@ -71,8 +71,8 @@ Plans:
 - [x] 02-04-PLAN.md - Service user phone/name entry flow
 - [x] 02-05-PLAN.md - Admin verification flow with Convex
 - [x] 02-06-PLAN.md - Session protection and auto-routing
-- [ ] 02-07-PLAN.md - Human verification checkpoint
-- [ ] 02-08-PLAN.md - Fix volunteer ID mismatch bug (gap closure)
+- [x] 02-07-PLAN.md - Human verification checkpoint
+- [x] 02-08-PLAN.md - Fix volunteer ID mismatch bug (gap closure)
 
 ### Phase 3: Queue Operations & Management
 **Goal**: Volunteers can view the full queue, add users (via QR or manual entry), remove users, reorder the queue, and search by name/phone, with positions auto-updating across all devices.
@@ -237,7 +237,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Real-Time Infrastructure & Session Management | 5/5 | Complete | 2026-01-26 |
-| 2. Authentication & Role Access | 6/8 | In progress (UAT) | - |
+| 2. Authentication & Role Access | 8/8 | Complete | 2026-01-27 |
 | 3. Queue Operations & Management | 0/TBD | Not started | - |
 | 4. Timer System | 0/TBD | Not started | - |
 | 5. Service User Intake & Experience | 0/TBD | Not started | - |

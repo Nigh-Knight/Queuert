@@ -9,11 +9,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Authentication & Access Control
 
-- [ ] **AUTH-01**: Admin can verify identity using special verification code
-- [ ] **AUTH-02**: Volunteer can scan admin-generated QR code to join session
-- [ ] **AUTH-03**: Service user can enter phone number and name without authentication
-- [ ] **AUTH-04**: System differentiates between guest, volunteer, and admin roles
-- [ ] **AUTH-05**: Volunteer QR codes are unique per session and non-transferable
+- [x] **AUTH-01**: Admin can verify identity using special verification code
+- [x] **AUTH-02**: Volunteer can scan admin-generated QR code to join session
+- [x] **AUTH-03**: Service user can enter phone number and name without authentication
+- [x] **AUTH-04**: System differentiates between guest, volunteer, and admin roles
+- [x] **AUTH-05**: Volunteer QR codes are unique per session and non-transferable
 
 ### Session Management
 
