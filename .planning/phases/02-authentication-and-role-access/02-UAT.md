@@ -1,18 +1,14 @@
 ---
-status: testing
+status: complete
 phase: 02-authentication-and-role-access
 source: 02-01-SUMMARY.md, 02-02-SUMMARY.md, 02-03-SUMMARY.md, 02-04-SUMMARY.md, 02-05-SUMMARY.md, 02-06-SUMMARY.md, recent-fixes
 started: 2026-01-27T05:30:00Z
-updated: 2026-01-27T05:40:00Z
+updated: 2026-01-27T05:48:00Z
 ---
 
 ## Current Test
 
-number: 9
-name: Volunteer assigns machine and starts cycle
-expected: |
-  Volunteer can select waiting user, click "Assign & Start Cycle", enter machine details, submit successfully WITHOUT "Volunteer user ID not found" error
-awaiting: user response
+[testing complete]
 
 ## Tests
 
@@ -54,26 +50,28 @@ severity: blocker
 
 ### 9. Volunteer assigns machine and starts cycle
 expected: Volunteer can select waiting user, click "Assign & Start Cycle", enter machine details, submit successfully WITHOUT "Volunteer user ID not found" error
-result: [pending]
+result: issue
+reported: "there is another issue, now the new error is Volunteer not found, please rescan qr code, for some reason its saying volunteer not found though the this si the event overview for volunteer, on on a volunteer screen but it doesnt see that, it says its not found"
+severity: blocker
 
 ### 10. Session data persists across app restarts
 expected: Volunteer closes and reopens app, still logged into same session without re-scanning QR code
-result: [pending]
+result: pass
 
 ### 11. Admin dashboard shows sessions in real-time
 expected: When new sessions are created (by another admin or same admin), the admin dashboard list updates automatically without manual refresh
-result: [pending]
+result: pass
 
 ### 12. Volunteer dashboard respects safe areas
 expected: On devices with notches (iPhone X+), the volunteer dashboard header and bottom navigation do not overlap with device cameras or system UI
-result: [pending]
+result: pass
 
 ## Summary
 
 total: 12
-passed: 7
-issues: 1
-pending: 4
+passed: 10
+issues: 2
+pending: 0
 skipped: 0
 
 ## Gaps
@@ -83,6 +81,16 @@ skipped: 0
   reason: "User reported: i thought it was fixed now, i can join the queue anymore from a volunteer perspective, but i was able to before"
   severity: blocker
   test: 8
+  root_cause: ""
+  artifacts: []
+  missing: []
+  debug_session: ""
+
+- truth: "Volunteer can select waiting user, click 'Assign & Start Cycle', enter machine details, submit successfully WITHOUT errors"
+  status: failed
+  reason: "User reported: there is another issue, now the new error is Volunteer not found, please rescan qr code, for some reason its saying volunteer not found though the this si the event overview for volunteer, on on a volunteer screen but it doesnt see that, it says its not found"
+  severity: blocker
+  test: 9
   root_cause: ""
   artifacts: []
   missing: []
