@@ -62,16 +62,17 @@ Plans:
   4. System correctly identifies and routes guest, volunteer, and admin roles to appropriate screens
   5. Volunteer QR codes are unique per session and cannot be used across different sessions
 
-**Plans**: 7 plans in 4 waves
+**Plans**: 8 plans in 4 waves
 
 Plans:
-- [ ] 02-01-PLAN.md - Session storage utility and auth mutations
-- [ ] 02-02-PLAN.md - expo-camera install and QR scanner component
-- [ ] 02-03-PLAN.md - Volunteer QR scan flow with Convex integration
-- [ ] 02-04-PLAN.md - Service user phone/name entry flow
-- [ ] 02-05-PLAN.md - Admin verification flow with Convex
-- [ ] 02-06-PLAN.md - Session protection and auto-routing
+- [x] 02-01-PLAN.md - Session storage utility and auth mutations
+- [x] 02-02-PLAN.md - expo-camera install and QR scanner component
+- [x] 02-03-PLAN.md - Volunteer QR scan flow with Convex integration
+- [x] 02-04-PLAN.md - Service user phone/name entry flow
+- [x] 02-05-PLAN.md - Admin verification flow with Convex
+- [x] 02-06-PLAN.md - Session protection and auto-routing
 - [ ] 02-07-PLAN.md - Human verification checkpoint
+- [ ] 02-08-PLAN.md - Fix volunteer ID mismatch bug (gap closure)
 
 ### Phase 3: Queue Operations & Management
 **Goal**: Volunteers can view the full queue, add users (via QR or manual entry), remove users, reorder the queue, and search by name/phone, with positions auto-updating across all devices.
@@ -231,12 +232,12 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Real-Time Infrastructure & Session Management | 5/5 | Complete | 2026-01-26 |
-| 2. Authentication & Role Access | 0/7 | Not started | - |
+| 2. Authentication & Role Access | 6/8 | In progress (UAT) | - |
 | 3. Queue Operations & Management | 0/TBD | Not started | - |
 | 4. Timer System | 0/TBD | Not started | - |
 | 5. Service User Intake & Experience | 0/TBD | Not started | - |
@@ -248,4 +249,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 ---
 *Roadmap created: 2026-01-23*
-*Last updated: 2026-01-26*
+*Last updated: 2026-01-27*
