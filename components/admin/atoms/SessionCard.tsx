@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Colors, Typography, Spacing, ComponentSize } from '@/constants/theme';
 
 interface SessionCardProps {
@@ -8,6 +8,8 @@ interface SessionCardProps {
   volunteerCount: number;
   isActive: boolean;
   onPress: () => void;
+  onEndSession?: () => void;
+  isEndingSession?: boolean;
 }
 
 export function SessionCard({
@@ -16,6 +18,8 @@ export function SessionCard({
   volunteerCount,
   isActive,
   onPress,
+  onEndSession,
+  isEndingSession = false,
 }: SessionCardProps) {
   const locationName = location === 'kams' ? 'KAMS' : 'STAR';
   const date = new Date(scheduledDate);
@@ -59,7 +63,23 @@ export function SessionCard({
       </View>
 
       <View style={styles.footer}>
-        <Text style={styles.actionText}>View Details</Text>
+        <TouchableOpacity onPress={onPress} style={styles.viewButton}>
+          <Text style={styles.actionText}>View Details</Text>
+        </TouchableOpacity>
+
+        {isActive && onEndSession && (
+          <TouchableOpacity
+            onPress={onEndSession}
+            style={[styles.endButton, isEndingSession && styles.endButtonDisabled]}
+            disabled={isEndingSession}
+          >
+            {isEndingSession ? (
+              <ActivityIndicator size="small" color={Colors.alert} />
+            ) : (
+              <Text style={styles.endButtonText}>End Session</Text>
+            )}
+          </TouchableOpacity>
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -127,11 +147,34 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     borderTopWidth: 1,
     borderTopColor: Colors.border,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  viewButton: {
+    flex: 1,
     alignItems: 'center',
   },
   actionText: {
     ...Typography.body,
     color: Colors.primary,
+    fontWeight: '600',
+  },
+  endButton: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: ComponentSize.buttonRadius,
+    backgroundColor: Colors.alert,
+    minWidth: 100,
+    alignItems: 'center',
+  },
+  endButtonDisabled: {
+    opacity: 0.6,
+  },
+  endButtonText: {
+    ...Typography.body,
+    color: '#fff',
     fontWeight: '600',
   },
 });

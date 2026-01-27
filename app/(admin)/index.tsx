@@ -1,9 +1,10 @@
 import { useRef, useCallback, useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ActivityIndicator, ScrollView, Alert } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { useQuery } from 'convex/react';
+import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
+import type { Id } from '@/convex/_generated/dataModel';
 import { Colors, Spacing } from '@/constants/theme';
 import { Header } from '@/components/provider/atoms/Header';
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
@@ -17,6 +18,9 @@ export default function AdminHome() {
   const insets = useSafeAreaInsets();
   const createSessionSheetRef = useRef<BottomSheet>(null);
   const [isCheckingSession, setIsCheckingSession] = useState(true);
+  const [endingSessionId, setEndingSessionId] = useState<Id<'sessions'> | null>(null);
+
+  const endSessionMutation = useMutation(api.sessions.endSession);
 
   // Check for existing session on mount
   useEffect(() => {
@@ -67,6 +71,37 @@ export default function AdminHome() {
     });
   }, [router]);
 
+  const handleEndSession = useCallback((sessionId: Id<'sessions'>, location: string) => {
+    const locationName = location === 'kams' ? 'KAMS' : 'STAR';
+
+    Alert.alert(
+      'End Session',
+      `Are you sure you want to end the ${locationName} session? This will mark the session as inactive.`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'End Session',
+          style: 'destructive',
+          onPress: async () => {
+            setEndingSessionId(sessionId);
+            try {
+              await endSessionMutation({ sessionId });
+              Alert.alert('Success', 'Session ended successfully');
+            } catch (error) {
+              Alert.alert('Error', 'Failed to end session. Please try again.');
+              console.error('Failed to end session:', error);
+            } finally {
+              setEndingSessionId(null);
+            }
+          },
+        },
+      ]
+    );
+  }, [endSessionMutation]);
+
   const renderBackdrop = useCallback(
     (props: any) => (
       <BottomSheetBackdrop
@@ -116,6 +151,8 @@ export default function AdminHome() {
                 volunteerCount={session.volunteerCount}
                 isActive={session.isActive}
                 onPress={() => handleViewSession(session._id)}
+                onEndSession={() => handleEndSession(session._id, session.location)}
+                isEndingSession={endingSessionId === session._id}
               />
             ))
           )}
