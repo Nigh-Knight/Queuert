@@ -88,12 +88,14 @@ Plans:
   4. Volunteer can drag users to different positions to manually reorder queue
   5. Volunteer can search queue by user name or phone number and find results instantly
 
-**Plans**: TBD
+**Plans**: 5 plans in 3 waves
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
-- [ ] 03-03: TBD
+- [ ] 03-01-PLAN.md - Queue management mutations (reorderQueue, auto-reposition on removal)
+- [ ] 03-02-PLAN.md - Install drag-and-drop library, add position numbers to QueueCard
+- [ ] 03-03-PLAN.md - Wire drag-and-drop sortable queue with confirmation dialog
+- [ ] 03-04-PLAN.md - Service user queue position view with real-time updates
+- [ ] 03-05-PLAN.md - Human verification checkpoint
 
 ### Phase 4: Timer System
 **Goal**: Volunteers can start customizable wash cycle timers that countdown in real-time across all devices using server-authoritative time, automatically update status when expired, and can be marked complete early.
@@ -238,7 +240,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 |-------|----------------|--------|-----------|
 | 1. Real-Time Infrastructure & Session Management | 5/5 | Complete | 2026-01-26 |
 | 2. Authentication & Role Access | 8/8 | Complete | 2026-01-27 |
-| 3. Queue Operations & Management | 0/TBD | Not started | - |
+| 3. Queue Operations & Management | 0/5 | Not started | - |
 | 4. Timer System | 0/TBD | Not started | - |
 | 5. Service User Intake & Experience | 0/TBD | Not started | - |
 | 6. Volunteer Operations & Offline Support | 0/TBD | Not started | - |
