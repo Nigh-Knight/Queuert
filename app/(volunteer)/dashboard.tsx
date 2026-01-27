@@ -18,6 +18,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -138,7 +139,7 @@ export default function VolunteerDashboard() {
       </View>
 
       {/* Logout button */}
-      <View style={styles.footer}>
+      <SafeAreaView style={styles.footer} edges={['bottom']}>
         <TouchableOpacity
           style={styles.logoutButton}
           onPress={handleLogout}
@@ -146,7 +147,7 @@ export default function VolunteerDashboard() {
         >
           <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     </View>
   );
 }
@@ -235,7 +236,6 @@ const styles = StyleSheet.create({
   },
   footer: {
     padding: Spacing.lg,
-    paddingBottom: Spacing.xxl + Spacing.lg, // Account for navigation bar
   },
   primaryButton: {
     backgroundColor: Colors.primary,

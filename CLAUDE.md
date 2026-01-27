@@ -226,7 +226,7 @@ Never add custom back buttons in headers or navigation components. Users should 
 ```
 
 #### Camera Safe Area
-All top sections must respect device safe areas to avoid overlapping with front-facing cameras, notches, and system UI.
+All top sections AND bottom sections MUST respect device safe areas to avoid overlapping with front-facing cameras, notches, and system UI.
 
 **Implementation:**
 - Use `SafeAreaView` from `react-native-safe-area-context` for top-level containers

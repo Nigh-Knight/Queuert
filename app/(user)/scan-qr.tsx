@@ -108,7 +108,6 @@ export default function ScanQRScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Header title="Scan Session QR" />
-
       <View style={styles.scannerContainer}>
         <QRScanner
           onScanComplete={handleScan}
