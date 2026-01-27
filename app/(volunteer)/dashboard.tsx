@@ -7,7 +7,7 @@
  * - QR Code: Generate QR codes for service users
  */
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -25,6 +25,8 @@ import { SessionStorage } from '@/utils/session-storage';
 import { Colors, Typography, Spacing, ComponentSize } from '@/constants/theme';
 import type { Id } from '@/convex/_generated/dataModel';
 import QRCode from 'react-native-qrcode-svg';
+import { Sortable, SortableItem } from 'react-native-reanimated-dnd';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // Components
 import { BottomTabBar, TabKey } from '@/components/volunteer/atoms/BottomTabBar';
@@ -38,7 +40,7 @@ import {
   AssignmentData,
 } from '@/components/volunteer/modals/AssignAndStartCycleModal';
 import { RemoveConfirmationModal } from '@/components/volunteer/modals/RemoveConfirmationModal';
-import { red } from 'react-native-reanimated/lib/typescript/Colors';
+import { ReorderConfirmationModal } from '@/components/volunteer/modals/ReorderConfirmationModal';
 
 // Types
 interface QueueItem {
@@ -64,6 +66,12 @@ interface SelectedUser {
   name: string;
 }
 
+interface PendingReorder {
+  userName: string;
+  newPosition: number;
+  orderedIds: string[];
+}
+
 export default function VolunteerDashboard() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -83,6 +91,7 @@ export default function VolunteerDashboard() {
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState<SelectedUser | null>(null);
   const [isActionLoading, setIsActionLoading] = useState(false);
+  const [pendingReorder, setPendingReorder] = useState<PendingReorder | null>(null);
 
   // Load session on mount
   useEffect(() => {
@@ -120,6 +129,7 @@ export default function VolunteerDashboard() {
   const endCycleMutation = useMutation(api.queue.endCycle);
   const removeFromQueueMutation = useMutation(api.queue.removeFromQueue);
   const ensureVolunteerUserMutation = useMutation(api.volunteers.ensureVolunteerUser);
+  const reorderMutation = useMutation(api.queue.reorderQueue);
 
   // Computed values
   const activeQueue = useMemo(() => {
@@ -275,6 +285,22 @@ export default function VolunteerDashboard() {
     });
   };
 
+  const handleReorderConfirm = useCallback(async () => {
+    if (!pendingReorder || !sessionId) return;
+    setIsActionLoading(true);
+    try {
+      await reorderMutation({
+        sessionId,
+        orderedIds: pendingReorder.orderedIds as Id<'queue'>[],
+      });
+      setPendingReorder(null);
+    } catch {
+      Alert.alert('Error', 'Failed to reorder queue. Please try again.');
+    } finally {
+      setIsActionLoading(false);
+    }
+  }, [pendingReorder, sessionId, reorderMutation]);
+
   // Loading state
   if (!sessionId || session === undefined) {
     return (
@@ -361,19 +387,21 @@ export default function VolunteerDashboard() {
     </ScrollView>
   );
 
-  const renderQueue = () => (
-    <View style={styles.queueContainer}>
-      <SearchBar
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        placeholder="Search users..."
-      />
+  const renderQueue = () => {
+    // Prepare data with id field for Sortable
+    const sortableData = filteredQueue.map(item => ({
+      ...item,
+      id: item._id,
+    }));
 
-      <ScrollView
-        style={styles.queueList}
-        contentContainerStyle={styles.queueListContent}
-        showsVerticalScrollIndicator={false}
-      >
+    return (
+      <View style={styles.queueContainer}>
+        <SearchBar
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder="Search users..."
+        />
+
         {filteredQueue.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={styles.emptyStateText}>
@@ -381,38 +409,70 @@ export default function VolunteerDashboard() {
             </Text>
           </View>
         ) : (
-          filteredQueue.map((item) => {
-            const userName = `${item.user?.firstName || ''} ${item.user?.lastName || ''}`.trim();
-            const displayStatus = item.status === 'ready_to_remove' ? 'done' : item.status;
+          <GestureHandlerRootView style={styles.queueList}>
+            <Sortable
+              data={sortableData}
+              itemHeight={180}
+              itemKeyExtractor={(item) => item._id}
+              renderItem={(props) => {
+                const item = props.item;
+                const userName = `${item.user?.firstName || ''} ${item.user?.lastName || ''}`.trim();
+                const displayStatus = item.status === 'ready_to_remove' ? 'done' : item.status;
 
-            return (
-              <QueueCard
-                key={item._id}
-                userName={userName || 'Unknown User'}
-                estimatedLoads={item.intake?.estimatedLaundryLoads || 0}
-                status={displayStatus as 'waiting' | 'washing' | 'drying' | 'done'}
-                onViewDetails={() => handleViewDetails(item._id)}
-                onStartWash={
-                  item.status === 'waiting' ? () => handleStartWash(item._id) : undefined
-                }
-                onAssignAndStart={
-                  item.status === 'waiting' ? () => handleAssignAndStart(item) : undefined
-                }
-                onEndCycle={
-                  item.status === 'washing' || item.status === 'drying'
-                    ? () => handleEndCycle(item._id)
-                    : undefined
-                }
-                onRemove={() => handleRemoveUser(item)}
-              />
-            );
-          })
+                return (
+                  <SortableItem
+                    id={props.id}
+                    data={item}
+                    positions={props.positions}
+                    lowerBound={props.lowerBound}
+                    autoScrollDirection={props.autoScrollDirection}
+                    itemsCount={props.itemsCount}
+                    itemHeight={props.itemHeight}
+                    onDrop={(id, position) => {
+                      // Find item that was moved
+                      const movedItem = sortableData.find(i => i._id === id);
+                      if (movedItem) {
+                        const name = `${movedItem.user?.firstName || ''} ${movedItem.user?.lastName || ''}`.trim();
+                        setPendingReorder({
+                          userName: name || 'Unknown User',
+                          newPosition: position + 1, // Convert to 1-indexed
+                          orderedIds: Object.entries(props.positions.value)
+                            .sort(([, a], [, b]) => (a as number) - (b as number))
+                            .map(([id]) => id),
+                        });
+                      }
+                    }}
+                  >
+                    <QueueCard
+                      position={item.position}
+                      userName={userName || 'Unknown User'}
+                      estimatedLoads={item.intake?.estimatedLaundryLoads || 0}
+                      status={displayStatus as 'waiting' | 'washing' | 'drying' | 'done'}
+                      onViewDetails={() => handleViewDetails(item._id)}
+                      onStartWash={
+                        item.status === 'waiting' ? () => handleStartWash(item._id) : undefined
+                      }
+                      onAssignAndStart={
+                        item.status === 'waiting' ? () => handleAssignAndStart(item) : undefined
+                      }
+                      onEndCycle={
+                        item.status === 'washing' || item.status === 'drying'
+                          ? () => handleEndCycle(item._id)
+                          : undefined
+                      }
+                      onRemove={() => handleRemoveUser(item)}
+                    />
+                  </SortableItem>
+                );
+              }}
+            />
+          </GestureHandlerRootView>
         )}
-      </ScrollView>
 
-      <FloatingActionButton onPress={handleAddUser} position="bottom-right" />
-    </View>
-  );
+        <FloatingActionButton onPress={handleAddUser} position="bottom-right" />
+      </View>
+    );
+  };
 
   const renderQRCode = () => {
     // Generate SESSION QR code value for service users (not volunteer QR!)
@@ -506,6 +566,15 @@ export default function VolunteerDashboard() {
           setSelectedUser(null);
         }}
         onConfirm={handleRemoveConfirm}
+        isLoading={isActionLoading}
+      />
+
+      <ReorderConfirmationModal
+        visible={pendingReorder !== null}
+        userName={pendingReorder?.userName || ''}
+        newPosition={pendingReorder?.newPosition || 0}
+        onClose={() => setPendingReorder(null)}
+        onConfirm={handleReorderConfirm}
         isLoading={isActionLoading}
       />
     </View>
