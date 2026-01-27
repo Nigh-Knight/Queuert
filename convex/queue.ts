@@ -92,13 +92,65 @@ export const markAsServed = mutation({
   },
 });
 
+// Reorder queue - batch position updates
+export const reorderQueue = mutation({
+  args: {
+    sessionId: v.id("sessions"),
+    orderedIds: v.array(v.id("queue")),
+  },
+  handler: async (ctx, args) => {
+    // Validate all IDs belong to this session
+    const queueItems = await Promise.all(
+      args.orderedIds.map(id => ctx.db.get(id))
+    );
+
+    const invalidItems = queueItems.filter(
+      item => !item || item.sessionId !== args.sessionId || item.status === "removed"
+    );
+
+    if (invalidItems.length > 0) {
+      throw new Error("Invalid queue items for session");
+    }
+
+    // Update positions in single transaction (1-indexed)
+    for (let i = 0; i < args.orderedIds.length; i++) {
+      await ctx.db.patch(args.orderedIds[i], {
+        position: i + 1,
+      });
+    }
+  },
+});
+
 // Remove from queue
 export const removeFromQueue = mutation({
   args: { queueId: v.id("queue") },
   handler: async (ctx, args) => {
-    await ctx.db.patch(args.queueId, {
-      status: "removed",
-    });
+    const queueItem = await ctx.db.get(args.queueId);
+    if (!queueItem) throw new Error("Queue item not found");
+
+    const removedPosition = queueItem.position;
+    const sessionId = queueItem.sessionId;
+
+    // Mark as removed
+    await ctx.db.patch(args.queueId, { status: "removed" });
+
+    // Get remaining active queue items with higher positions
+    const remainingItems = await ctx.db
+      .query("queue")
+      .withIndex("by_session_status", q =>
+        q.eq("sessionId", sessionId)
+      )
+      .filter(q => q.neq(q.field("status"), "removed"))
+      .filter(q => q.neq(q.field("status"), "served"))
+      .filter(q => q.gt(q.field("position"), removedPosition))
+      .collect();
+
+    // Decrement positions to close gap
+    for (const item of remainingItems) {
+      await ctx.db.patch(item._id, {
+        position: item.position - 1,
+      });
+    }
   },
 });
 
