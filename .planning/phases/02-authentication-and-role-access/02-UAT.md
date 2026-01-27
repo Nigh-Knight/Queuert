@@ -1,9 +1,9 @@
 ---
-status: complete
+status: diagnosed
 phase: 02-authentication-and-role-access
 source: 02-01-SUMMARY.md, 02-02-SUMMARY.md, 02-03-SUMMARY.md, 02-04-SUMMARY.md, 02-05-SUMMARY.md, 02-06-SUMMARY.md, recent-fixes
 started: 2026-01-27T05:30:00Z
-updated: 2026-01-27T05:48:00Z
+updated: 2026-01-27T05:50:00Z
 ---
 
 ## Current Test
@@ -81,20 +81,31 @@ skipped: 0
   reason: "User reported: i thought it was fixed now, i can join the queue anymore from a volunteer perspective, but i was able to before"
   severity: blocker
   test: 8
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "Volunteer dashboard incorrectly searches for volunteer by QR code instead of volunteer database ID, causing QR code display to fail with infinite loading spinner. Service users cannot scan non-existent QR code to join queue."
+  artifacts:
+    - path: "app/(volunteer)/dashboard.tsx"
+      line: 155
+      issue: "Incorrect volunteer lookup using qrCode field instead of _id field"
+  missing:
+    - "Change volunteer lookup from v.qrCode === volunteerId to v._id === volunteerId"
+  debug_session: ".planning/debug/test-8-queue-join-failure.md"
 
 - truth: "Volunteer can select waiting user, click 'Assign & Start Cycle', enter machine details, submit successfully WITHOUT errors"
   status: failed
   reason: "User reported: there is another issue, now the new error is Volunteer not found, please rescan qr code, for some reason its saying volunteer not found though the this si the event overview for volunteer, on on a volunteer screen but it doesnt see that, it says its not found"
   severity: blocker
   test: 9
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "ID type mismatch causing volunteer lookup failure. SessionStorage stores volunteerId as Convex document ID but dashboard.tsx compares it against volunteer.qrCode UUID, causing find() to never match."
+  artifacts:
+    - path: "app/(volunteer)/dashboard.tsx"
+      line: 210
+      issue: "Wrong comparison field - v.qrCode should be v._id"
+    - path: "app/(volunteer)/dashboard.tsx"
+      line: 155
+      issue: "Same bug pattern for QR code display"
+  missing:
+    - "Change volunteers.find() calls to compare against v._id instead of v.qrCode"
+  debug_session: ".planning/debug/test-9-volunteer-not-found.md"
 
 ## Enhancement Requests
 
