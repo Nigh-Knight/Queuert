@@ -5,6 +5,7 @@ import { CustomButton } from '@/components/provider/atoms/CustomButton';
 import { StatusBadge } from './StatusBadge';
 
 export interface QueueCardProps {
+  position: number;
   userName: string;
   estimatedLoads: number;
   status: 'waiting' | 'washing' | 'drying' | 'done';
@@ -17,6 +18,7 @@ export interface QueueCardProps {
 }
 
 export function QueueCard({
+  position,
   userName,
   estimatedLoads,
   status,
@@ -95,13 +97,16 @@ export function QueueCard({
   return (
     <View style={[styles.container, containerStyle]}>
       <View style={styles.header}>
+        <View style={styles.positionBadge}>
+          <Text style={styles.positionText}>{position}</Text>
+        </View>
         <View style={styles.userInfo}>
           <Text style={styles.userName}>{userName}</Text>
           <Text style={styles.loads}>{estimatedLoads} estimated loads</Text>
         </View>
         <StatusBadge status={status} />
       </View>
-      
+
       <View style={styles.actions}>
         {renderActionButtons()}
       </View>
@@ -127,8 +132,22 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     marginBottom: Spacing.md,
+  },
+  positionBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: Colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.md,
+  },
+  positionText: {
+    color: Colors.background,
+    fontSize: 14,
+    fontWeight: '700',
   },
   userInfo: {
     flex: 1,
