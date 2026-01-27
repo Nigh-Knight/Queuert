@@ -11,7 +11,7 @@
  * - Auto-detection of QR codes in frame
  */
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import {
   View,
   Text,
@@ -28,30 +28,42 @@ interface QRScannerProps {
   onError?: (error: string) => void;
 }
 
-export function QRScanner({ onScanComplete, onError }: QRScannerProps) {
-  const [permission, requestPermission] = useCameraPermissions();
-  const hasScanned = useRef<boolean>(false);
+export interface QRScannerRef {
+  resetScan: () => void;
+}
 
-  // Reset scan state when component mounts
-  useEffect(() => {
-    hasScanned.current = false;
-  }, []);
+export const QRScanner = forwardRef<QRScannerRef, QRScannerProps>(
+  ({ onScanComplete, onError }, ref) => {
+    const [permission, requestPermission] = useCameraPermissions();
+    const hasScanned = useRef<boolean>(false);
 
-  const handleScan = (result: { data: string }) => {
-    // Prevent duplicate scan processing
-    if (hasScanned.current) {
-      return;
-    }
+    // Reset scan state when component mounts
+    useEffect(() => {
+      hasScanned.current = false;
+    }, []);
 
-    hasScanned.current = true;
+    // Expose reset function to parent via ref
+    useImperativeHandle(ref, () => ({
+      resetScan: () => {
+        hasScanned.current = false;
+      },
+    }));
 
-    try {
-      onScanComplete(result.data);
-    } catch (error) {
-      hasScanned.current = false; // Allow retry on error
-      onError?.(error instanceof Error ? error.message : 'Scan processing failed');
-    }
-  };
+    const handleScan = (result: { data: string }) => {
+      // Prevent duplicate scan processing
+      if (hasScanned.current) {
+        return;
+      }
+
+      hasScanned.current = true;
+
+      try {
+        onScanComplete(result.data);
+      } catch (error) {
+        hasScanned.current = false; // Allow retry on error
+        onError?.(error instanceof Error ? error.message : 'Scan processing failed');
+      }
+    };
 
   const handleOpenSettings = async () => {
     try {
@@ -130,7 +142,7 @@ export function QRScanner({ onScanComplete, onError }: QRScannerProps) {
       </View>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {

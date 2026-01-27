@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { View, Text, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Header } from '@/components/provider/atoms/Header';
-import { QRScanner } from '@/components/auth/QRScanner';
+import { QRScanner, QRScannerRef } from '@/components/auth/QRScanner';
 import { SessionStorage } from '@/utils/session-storage';
 import { Colors, Spacing } from '@/constants/theme';
 
@@ -17,6 +17,7 @@ import { Colors, Spacing } from '@/constants/theme';
  */
 export default function ScanQRScreen() {
   const router = useRouter();
+  const scannerRef = useRef<QRScannerRef>(null);
   const [isValidating, setIsValidating] = useState(false);
 
   // Get registration data from route params
@@ -91,6 +92,8 @@ export default function ScanQRScreen() {
           text: 'Try Again',
           onPress: () => {
             setIsValidating(false);
+            // Reset scanner to allow retry
+            scannerRef.current?.resetScan();
           },
         },
         {
@@ -110,9 +113,18 @@ export default function ScanQRScreen() {
       <Header title="Scan Session QR" />
       <View style={styles.scannerContainer}>
         <QRScanner
+          ref={scannerRef}
           onScanComplete={handleScan}
           onError={(err) => {
-            Alert.alert('Scan Error', err);
+            Alert.alert('Scan Error', err, [
+              {
+                text: 'OK',
+                onPress: () => {
+                  // Reset scanner to allow retry
+                  scannerRef.current?.resetScan();
+                },
+              },
+            ]);
           }}
         />
       </View>

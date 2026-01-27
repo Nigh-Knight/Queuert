@@ -9,7 +9,7 @@
  * - Persists session to AsyncStorage on success
  */
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -20,12 +20,13 @@ import {
 import { useRouter } from 'expo-router';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { QRScanner } from '@/components/auth/QRScanner';
+import { QRScanner, QRScannerRef } from '@/components/auth/QRScanner';
 import { SessionStorage, SessionData } from '@/utils/session-storage';
 import { Colors, Typography, Spacing } from '@/constants/theme';
 
 export default function VolunteerScanQR() {
   const router = useRouter();
+  const scannerRef = useRef<QRScannerRef>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pendingSession, setPendingSession] = useState<SessionData | null>(null);
@@ -87,7 +88,11 @@ export default function VolunteerScanQR() {
         [
           {
             text: 'Try Again',
-            onPress: () => setError(null),
+            onPress: () => {
+              setError(null);
+              // Reset scanner to allow retry
+              scannerRef.current?.resetScan();
+            },
           },
         ]
       );
@@ -128,7 +133,11 @@ export default function VolunteerScanQR() {
     Alert.alert('Scanner Error', errorMsg, [
       {
         text: 'OK',
-        onPress: () => setError(null),
+        onPress: () => {
+          setError(null);
+          // Reset scanner to allow retry
+          scannerRef.current?.resetScan();
+        },
       },
     ]);
   };
@@ -137,6 +146,7 @@ export default function VolunteerScanQR() {
     <View style={styles.container}>
       {/* QR Scanner */}
       <QRScanner
+        ref={scannerRef}
         onScanComplete={handleScanComplete}
         onError={handleError}
       />
