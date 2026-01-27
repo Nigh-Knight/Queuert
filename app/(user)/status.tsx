@@ -27,9 +27,10 @@ export default function StatusScreen() {
   );
 
   // Query user's queue position
-  // Note: This query doesn't exist yet - will be implemented in Phase 5
-  // For now, show placeholder
-  const queuePosition = null;
+  const queueEntry = useQuery(
+    api.queue.getUserQueuePosition,
+    sessionData?.userId ? { serviceUserId: sessionData.userId } : 'skip'
+  );
 
   useEffect(() => {
     loadSession();
@@ -77,7 +78,7 @@ export default function StatusScreen() {
     );
   };
 
-  if (isLoading || !session) {
+  if (isLoading || !session || queueEntry === undefined) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={Colors.primary} />
@@ -85,6 +86,69 @@ export default function StatusScreen() {
       </View>
     );
   }
+
+  // User is not in queue
+  if (queueEntry === null) {
+    return (
+      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+        <Header title="Queue Status" />
+        <View style={styles.content}>
+          <View style={styles.emptyCard}>
+            <Text style={styles.emptyTitle}>Not in Queue</Text>
+            <Text style={styles.emptyText}>
+              You are not currently in the queue. Please check with a volunteer if you need assistance.
+            </Text>
+          </View>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Helper to show user-friendly status text
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'waiting': return 'Waiting in line';
+      case 'washing': return 'Wash cycle in progress';
+      case 'drying': return 'Drying in progress';
+      case 'ready_to_remove': return 'Ready for pickup!';
+      default: return status;
+    }
+  };
+
+  // Helper to get status color
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'waiting': return Colors.secondary;
+      case 'washing': return Colors.primary;
+      case 'drying': return Colors.primary;
+      case 'ready_to_remove': return Colors.success;
+      default: return Colors.secondary;
+    }
+  };
+
+  // Helper to get contextual message based on position and status
+  const getContextMessage = (position: number, status: string) => {
+    if (status === 'ready_to_remove') {
+      return "Your laundry is ready! Please come pick it up.";
+    }
+    if (status === 'washing' || status === 'drying') {
+      return "Your laundry is being processed.";
+    }
+    if (position === 1) {
+      return "You're next! Please be ready.";
+    }
+    if (position <= 3) {
+      return "Almost there! Just a few more ahead of you.";
+    }
+    return "Please wait, we'll let you know when it's your turn.";
+  };
+
+  // Helper to calculate estimated wait time
+  const getEstimatedWait = (position: number, status: string) => {
+    if (status !== 'waiting' || position <= 1) return null;
+    const minutes = (position - 1) * 25;
+    return `Estimated wait: ~${minutes} minutes`;
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
@@ -96,12 +160,27 @@ export default function StatusScreen() {
           <Text style={styles.locationName}>{session.location}</Text>
 
           <View style={styles.positionContainer}>
-            <Text style={styles.positionLabel}>Position</Text>
-            <Text style={styles.positionValue}>--</Text>
-            <Text style={styles.positionNote}>
-              Queue position tracking coming in Phase 5
-            </Text>
+            <Text style={styles.positionLabel}>Your Position</Text>
+            <Text style={styles.positionValue}>#{queueEntry.position}</Text>
           </View>
+
+          <View style={styles.statusBadgeContainer}>
+            <Text style={styles.statusLabel}>Status</Text>
+            <View style={[styles.statusBadge, { backgroundColor: getStatusColor(queueEntry.status) }]}>
+              <Text style={styles.statusText}>{getStatusText(queueEntry.status)}</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.messageCard}>
+          <Text style={styles.messageText}>
+            {getContextMessage(queueEntry.position, queueEntry.status)}
+          </Text>
+          {getEstimatedWait(queueEntry.position, queueEntry.status) && (
+            <Text style={styles.estimatedWaitText}>
+              {getEstimatedWait(queueEntry.position, queueEntry.status)}
+            </Text>
+          )}
         </View>
 
         <View style={styles.infoCard}>
@@ -188,10 +267,60 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     marginBottom: Spacing.md,
   },
-  positionNote: {
-    ...Typography.caption,
-    color: Colors.text.tertiary,
-    fontStyle: 'italic',
+  statusBadgeContainer: {
+    marginTop: Spacing.xl,
+    alignItems: 'center',
+  },
+  statusLabel: {
+    ...Typography.body,
+    color: Colors.text.secondary,
+    marginBottom: Spacing.sm,
+  },
+  statusBadge: {
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    borderRadius: 20,
+  },
+  statusText: {
+    color: Colors.background,
+    fontWeight: '600',
+    fontSize: Typography.body.fontSize,
+  },
+  emptyCard: {
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: 12,
+    padding: Spacing.xxl,
+    alignItems: 'center',
+  },
+  emptyTitle: {
+    ...Typography.h1,
+    color: Colors.text.primary,
+    marginBottom: Spacing.md,
+  },
+  emptyText: {
+    ...Typography.body,
+    color: Colors.text.secondary,
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  messageCard: {
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: 12,
+    padding: Spacing.xl,
+    marginBottom: Spacing.xl,
+    alignItems: 'center',
+  },
+  messageText: {
+    ...Typography.h2,
+    color: Colors.text.primary,
+    textAlign: 'center',
+    lineHeight: 26,
+  },
+  estimatedWaitText: {
+    ...Typography.body,
+    color: Colors.text.secondary,
+    marginTop: Spacing.md,
+    textAlign: 'center',
   },
   infoCard: {
     backgroundColor: Colors.surfaceLight,
