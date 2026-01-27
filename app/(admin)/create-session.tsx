@@ -90,6 +90,8 @@ export default function CreateSession() {
           );
         }
 
+        setIsLoading(false);
+
         // Navigate to QR code display (Plan 05)
         router.push({
           pathname: '/(admin)/session-qr-codes',
@@ -100,11 +102,10 @@ export default function CreateSession() {
         attempts++;
         if (attempts >= 3) {
           setError('Failed to create session. Please try again.');
+          setIsLoading(false);
         }
       }
     }
-
-    setIsLoading(false);
   };
 
   return (

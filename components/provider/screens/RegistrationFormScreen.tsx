@@ -19,6 +19,7 @@ export interface RegistrationFormScreenProps {
 export interface RegistrationData {
   firstName: string;
   lastName: string;
+  phone?: string;
   livingCondition: string;
   estimatedLoads: string;
   estimatedWeight: string;
@@ -36,6 +37,7 @@ export function RegistrationFormScreen({
 }: RegistrationFormScreenProps) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [phone, setPhone] = useState('');
   const [livingCondition, setLivingCondition] = useState<string | number>('homeless');
   const [estimatedLoads, setEstimatedLoads] = useState('');
   const [estimatedWeight, setEstimatedWeight] = useState('');
@@ -57,6 +59,7 @@ export function RegistrationFormScreen({
       onSubmit({
         firstName: firstName.trim(),
         lastName: lastName.trim(),
+        phone: phone.trim() || undefined,
         livingCondition: String(livingCondition),
         estimatedLoads,
         estimatedWeight,
@@ -86,6 +89,14 @@ export function RegistrationFormScreen({
           placeholder="Doe"
           value={lastName}
           onChangeText={setLastName}
+        />
+
+        <InputField
+          label="Phone Number (optional)"
+          placeholder="(555) 123-4567"
+          value={phone}
+          onChangeText={setPhone}
+          keyboardType="phone-pad"
         />
 
         <Text style={styles.sectionTitle}>Living Situation</Text>

@@ -6,6 +6,8 @@ export default function VolunteerLayout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="scan-qr" />
       <Stack.Screen name="dashboard" />
+      <Stack.Screen name="add-user" />
+      <Stack.Screen name="user-details" />
     </Stack>
   );
 }

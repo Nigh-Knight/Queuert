@@ -94,3 +94,14 @@ export const getSessionById = query({
     return await ctx.db.get(args.sessionId);
   },
 });
+
+// Get all active sessions (for admin dashboard)
+export const getAllActiveSessions = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("sessions")
+      .filter((q) => q.eq(q.field("isActive"), true))
+      .collect();
+  },
+});

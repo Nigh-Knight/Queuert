@@ -24,12 +24,14 @@ export default function ScanQRScreen() {
   const {
     firstName,
     lastName,
+    phone,
     livingCondition,
     estimatedLoads,
     estimatedWeight,
   } = useLocalSearchParams<{
     firstName: string;
     lastName: string;
+    phone?: string;
     livingCondition: string;
     estimatedLoads: string;
     estimatedWeight: string;
@@ -59,8 +61,7 @@ export default function ScanQRScreen() {
         sessionId: sessionId as any,
         firstName: firstName || '',
         lastName: lastName || '',
-        // Note: phone is optional - not collected in registration form
-        phone: undefined,
+        phone: phone && phone.trim() ? phone : undefined,
       });
 
       // Step 3: Submit intake form

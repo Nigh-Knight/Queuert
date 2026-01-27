@@ -24,7 +24,7 @@ export const generateVolunteerCodes = mutation({
         sessionId: args.sessionId,
         qrCode,
         assignedAt: Date.now(),
-        userId: undefined as any, // Will be set when volunteer scans and registers
+        // userId will be set when volunteer scans and registers (omitted for optional field)
       });
 
       volunteers.push({ volunteerId, qrCode });
@@ -75,5 +75,47 @@ export const getVolunteerByQrCode = query({
       .query("volunteers")
       .withIndex("by_qr_code", (q) => q.eq("qrCode", args.qrCode))
       .first();
+  },
+});
+
+// Ensure volunteer has a user record (backfill helper)
+// This is automatically called when needed, but can also be invoked manually
+export const ensureVolunteerUser = mutation({
+  args: {
+    volunteerId: v.id("volunteers"),
+  },
+  handler: async (ctx, args) => {
+    const volunteer = await ctx.db.get(args.volunteerId);
+    if (!volunteer) {
+      throw new Error("Volunteer not found");
+    }
+
+    // If already has userId, return it
+    if (volunteer.userId) {
+      return volunteer.userId;
+    }
+
+    // Get session for location
+    const session = await ctx.db.get(volunteer.sessionId);
+    if (!session) {
+      throw new Error("Session not found");
+    }
+
+    // Create user record for volunteer
+    const userId = await ctx.db.insert("users", {
+      firstName: "Volunteer",
+      lastName: volunteer.qrCode.substring(0, 8),
+      role: "volunteer",
+      location: session.location,
+      language: "en",
+      createdAt: Date.now(),
+    });
+
+    // Link user record to volunteer
+    await ctx.db.patch(volunteer._id, {
+      userId,
+    });
+
+    return userId;
   },
 });

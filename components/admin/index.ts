@@ -21,6 +21,10 @@ export type { SearchBarProps } from './atoms/SearchBar';
 export { FloatingActionButton } from './atoms/FloatingActionButton';
 export type { FloatingActionButtonProps } from './atoms/FloatingActionButton';
 
+export { SessionCard } from './atoms/SessionCard';
+
+export { EmptyState } from './atoms/EmptyState';
+
 // ============================================================================
 // Admin Screens
 // ============================================================================

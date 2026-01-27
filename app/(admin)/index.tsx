@@ -1,8 +1,8 @@
 import { useRef, useCallback, useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { useQuery, useMutation } from 'convex/react';
+import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Colors, Spacing } from '@/constants/theme';
 import { Header } from '@/components/provider/atoms/Header';
@@ -10,12 +10,12 @@ import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { CreateSessionBottomSheet } from '@/components/admin/CreateSessionBottomSheet';
 import { SessionStorage } from '@/utils/session-storage';
+import { SessionCard, EmptyState } from '@/components/admin';
 
 export default function AdminHome() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const createSessionSheetRef = useRef<BottomSheet>(null);
-  const [isCreateSessionOpen, setIsCreateSessionOpen] = useState(false);
   const [isCheckingSession, setIsCheckingSession] = useState(true);
 
   // Check for existing session on mount
@@ -36,24 +36,18 @@ export default function AdminHome() {
     checkSession();
   }, [router]);
 
-  // Query active sessions for both locations (only if verified)
+  // Query all active sessions (only if verified)
   // Note: Queries will return undefined when not verified, which is fine
-  const kamsSession = useQuery(
-    api.sessions.getActiveSession,
-    { location: 'kams' }
-  );
-  const starSession = useQuery(
-    api.sessions.getActiveSession,
-    { location: 'star' }
+  const activeSessions = useQuery(
+    api.sessions.getAllActiveSessions,
+    isCheckingSession ? 'skip' : {}
   );
 
   const handleOpenCreateSession = useCallback(() => {
-    setIsCreateSessionOpen(true);
     createSessionSheetRef.current?.expand();
   }, []);
 
   const handleCloseCreateSession = useCallback(() => {
-    setIsCreateSessionOpen(false);
     createSessionSheetRef.current?.close();
   }, []);
 
@@ -65,6 +59,13 @@ export default function AdminHome() {
       params: { sessionId },
     });
   }, [router, handleCloseCreateSession]);
+
+  const handleViewSession = useCallback((sessionId: string) => {
+    router.push({
+      pathname: '/(admin)/session-qr-codes',
+      params: { sessionId },
+    });
+  }, [router]);
 
   const renderBackdrop = useCallback(
     (props: any) => (
@@ -95,10 +96,30 @@ export default function AdminHome() {
       <SafeAreaView style={styles.container} edges={['top']}>
         <Header title="👨‍💼 Admin Dashboard" />
 
-        {/* Session status cards will go here */}
-        <View style={styles.content}>
-          {/* Show active session info for each location */}
-        </View>
+        {/* Session list */}
+        <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+          {!activeSessions ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={Colors.primary} />
+            </View>
+          ) : activeSessions.length === 0 ? (
+            <EmptyState
+              title="No Active Sessions"
+              message="Create a new session to get started with queue management"
+            />
+          ) : (
+            activeSessions.map((session) => (
+              <SessionCard
+                key={session._id}
+                location={session.location}
+                scheduledDate={session.scheduledDate}
+                volunteerCount={session.volunteerCount}
+                isActive={session.isActive}
+                onPress={() => handleViewSession(session._id)}
+              />
+            ))
+          )}
+        </ScrollView>
 
         {/* FAB for creating sessions */}
         <TouchableOpacity
@@ -118,7 +139,6 @@ export default function AdminHome() {
           backdropComponent={renderBackdrop}
           handleIndicatorStyle={styles.sheetIndicator}
           backgroundStyle={styles.sheetBackground}
-          onChange={(index) => setIsCreateSessionOpen(index >= 0)}
         >
           <CreateSessionBottomSheet
             onClose={handleCloseCreateSession}
@@ -132,12 +152,17 @@ export default function AdminHome() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
+  scrollView: { flex: 1 },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    minHeight: 300,
   },
-  content: { flex: 1, padding: Spacing.md },
+  content: {
+    padding: Spacing.md,
+    paddingBottom: 100, // Extra padding for FAB
+  },
   fab: {
     position: 'absolute',
     right: Spacing.lg,

@@ -56,7 +56,8 @@ export default defineSchema({
     position: v.number(),
     status: v.union(
       v.literal("waiting"),
-      v.literal("washing"), 
+      v.literal("washing"),
+      v.literal("drying"),
       v.literal("ready_to_remove"),
       v.literal("served"),
       v.literal("removed")
@@ -65,6 +66,9 @@ export default defineSchema({
     timerStartedAt: v.optional(v.number()),
     timerDuration: v.number(),
     volunteerAssignedId: v.optional(v.id("users")),
+    // Machine assignment fields
+    machineNumber: v.optional(v.string()),
+    machineType: v.optional(v.union(v.literal("washer"), v.literal("dryer"))),
   })
   .index("by_session_status", ["sessionId", "status"])
   .index("by_position", ["sessionId", "position"]),

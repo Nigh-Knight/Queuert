@@ -26,6 +26,7 @@ export default function UserRegistration() {
       params: {
         firstName: data.firstName,
         lastName: data.lastName,
+        phone: data.phone || '',
         livingCondition: data.livingCondition,
         estimatedLoads: data.estimatedLoads,
         estimatedWeight: data.estimatedWeight,

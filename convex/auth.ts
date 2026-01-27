@@ -3,6 +3,7 @@ import { v } from "convex/values";
 
 /**
  * Validate volunteer QR code and return session/volunteer info
+ * Creates a user record for the volunteer if not already set
  */
 export const validateVolunteerQR = mutation({
   args: {
@@ -28,6 +29,31 @@ export const validateVolunteerQR = mutation({
 
     if (!session.isActive) {
       throw new Error("This session has ended. Please contact admin to start a new session.");
+    }
+
+    // Create user record for volunteer if not already set
+    // This allows volunteers to be assigned to queue items
+    if (!volunteer.userId) {
+      const userId = await ctx.db.insert("users", {
+        firstName: "Volunteer",
+        lastName: volunteer.qrCode.substring(0, 8), // Use part of QR code as identifier
+        role: "volunteer",
+        location: session.location,
+        language: "en",
+        createdAt: Date.now(),
+      });
+
+      // Link user record to volunteer
+      await ctx.db.patch(volunteer._id, {
+        userId,
+      });
+
+      return {
+        volunteerId: volunteer._id,
+        sessionId: volunteer.sessionId,
+        location: session.location,
+        role: "volunteer" as const,
+      };
     }
 
     return {

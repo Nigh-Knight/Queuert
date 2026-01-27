@@ -24,9 +24,9 @@ export const getActiveQueue = query({
   },
 });
 
-// Start wash timer
+// Start wash timer (simple - uses existing duration)
 export const startTimer = mutation({
-  args: { 
+  args: {
     queueId: v.id("queue"),
     volunteerUserId: v.id("users"),
   },
@@ -35,6 +35,59 @@ export const startTimer = mutation({
       status: "washing",
       timerStartedAt: Date.now(),
       volunteerAssignedId: args.volunteerUserId,
+    });
+  },
+});
+
+// Assign machine and start cycle (full assignment)
+export const assignAndStartCycle = mutation({
+  args: {
+    queueId: v.id("queue"),
+    volunteerUserId: v.id("users"),
+    machineNumber: v.string(),
+    machineType: v.union(v.literal("washer"), v.literal("dryer")),
+    durationMinutes: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const status = args.machineType === "washer" ? "washing" : "drying";
+    await ctx.db.patch(args.queueId, {
+      status,
+      timerStartedAt: Date.now(),
+      timerDuration: args.durationMinutes * 60 * 1000, // Convert to ms
+      volunteerAssignedId: args.volunteerUserId,
+      machineNumber: args.machineNumber,
+      machineType: args.machineType,
+    });
+  },
+});
+
+// End current cycle (mark as ready to remove or switch to dryer)
+export const endCycle = mutation({
+  args: {
+    queueId: v.id("queue"),
+  },
+  handler: async (ctx, args) => {
+    const queueItem = await ctx.db.get(args.queueId);
+    if (!queueItem) {
+      throw new Error("Queue item not found");
+    }
+
+    // Clear machine assignment and mark as ready
+    await ctx.db.patch(args.queueId, {
+      status: "ready_to_remove",
+      timerStartedAt: undefined,
+      machineNumber: undefined,
+      machineType: undefined,
+    });
+  },
+});
+
+// Mark user as served (complete their service)
+export const markAsServed = mutation({
+  args: { queueId: v.id("queue") },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.queueId, {
+      status: "served",
     });
   },
 });
